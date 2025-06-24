@@ -1,8 +1,54 @@
-﻿@{
+@model GameSite.Models.LeaderboardViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <h4>XP Leaders</h4>
+        <table class="table table-sm">
+            <thead>
+                <tr><th>UserName</th><th>XP</th></tr>
+            </thead>
+            <tbody>
+            @foreach (var u in Model.TopXP)
+            {
+                <tr><td>@u.UserName</td><td>@u.XP</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <h4>Rank Leaders</h4>
+        <table class="table table-sm">
+            <thead>
+                <tr><th>UserName</th><th>Rank</th></tr>
+            </thead>
+            <tbody>
+            @foreach (var u in Model.TopRank)
+            {
+                <tr><td>@u.UserName</td><td>@u.Rank</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <h4>Balance Leaders</h4>
+        <table class="table table-sm">
+            <thead>
+                <tr><th>UserName</th><th>Balance</th></tr>
+            </thead>
+            <tbody>
+            @foreach (var u in Model.TopBalance)
+            {
+                <tr><td>@u.UserName</td><td>@u.Balance.ToString("0")</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
 </div>

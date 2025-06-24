@@ -92,6 +92,10 @@ namespace GameSite.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<string>("UniqueId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("XP")
                         .HasColumnType("integer");
 
@@ -103,6 +107,9 @@ namespace GameSite.Data.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
+
+                    b.HasIndex("UniqueId")
+                        .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
                 });

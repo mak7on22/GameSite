@@ -7,6 +7,9 @@
 @if (Model != null)
 {
     <p>UserName: @Model.UserName</p>
+    <p>Your ID: @Model.UniqueId</p>
+    <p>Email: @Model.Email</p>
+    <p>Balance: @Model.Balance.ToString("0") GameCoins</p>
     <p>XP: @Model.XP</p>
     <p>Rank: @Model.Rank</p>
     <a asp-action="Edit" class="btn btn-primary">Edit profile</a>

@@ -47,6 +47,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <div class="d-flex position-relative me-2">
+                            <input id="user-search" class="form-control" type="search" placeholder="Find players" autocomplete="off" />
+                            <div id="search-results" class="list-group position-absolute"></div>
+                        </div>
+                    }
                     <partial name="_LoginPartial" />
                 </div>
             </div>

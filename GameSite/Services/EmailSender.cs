@@ -7,7 +7,7 @@ using GameSite.Models;
 
 namespace GameSite.Services
 {
-    public class EmailSender : IEmailSender
+    public class EmailSender : IEmailSender, IEmailService
     {
         public Task SendEmailAsync(string email, string subject, string message)
         {

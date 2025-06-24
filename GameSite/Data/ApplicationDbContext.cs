@@ -14,6 +14,7 @@ namespace GameSite.Data
         public DbSet<Friend> Friends => Set<Friend>();
         public DbSet<Like> Likes => Set<Like>();
         public DbSet<Post> Posts => Set<Post>();
+        public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

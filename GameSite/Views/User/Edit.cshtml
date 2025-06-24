@@ -3,10 +3,14 @@
     ViewData["Title"] = "Edit Profile";
 }
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="mb-3">
-        <label asp-for="AvatarPath" class="form-label"></label>
+        <label asp-for="AvatarPath" class="form-label">Avatar URL</label>
         <input asp-for="AvatarPath" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="avatarFile">Upload Avatar</label>
+        <input type="file" name="avatarFile" class="form-control" />
     </div>
     <div class="mb-3">
         <label asp-for="UserName" class="form-label"></label>

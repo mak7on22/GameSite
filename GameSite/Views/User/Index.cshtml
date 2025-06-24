@@ -1,16 +1,40 @@
-@model GameSite.Models.ApplicationUser
+@model GameSite.Models.UserProfileViewModel
 @{
     ViewData["Title"] = "Profile";
 }
 
-<h2>Your profile</h2>
-@if (Model != null)
+<h2>Profile</h2>
+@if (Model?.User != null)
 {
-    <p>UserName: @Model.UserName</p>
-    <p>Your ID: @Model.UniqueId</p>
-    <p>Email: @Model.Email</p>
-    <p>Balance: @Model.Balance.ToString("0") GameCoins</p>
-    <p>XP: @Model.XP</p>
-    <p>Rank: @Model.Rank</p>
-    <a asp-action="Edit" class="btn btn-primary">Edit profile</a>
+    if (!string.IsNullOrEmpty(Model.User.AvatarPath))
+    {
+        <img src="@Model.User.AvatarPath" alt="avatar" class="img-thumbnail mb-2" style="max-width:150px;" />
+    }
+    <p>UserName: @Model.User.UserName</p>
+    <p>Your ID: @Model.User.UniqueId</p>
+    <p>Email: @Model.User.Email</p>
+    <p>Balance: @Model.User.Balance.ToString("0") GameCoins</p>
+    <p>XP: @Model.User.XP</p>
+    <p>Rank: @Model.User.Rank</p>
+    @if (Model.IsSelf)
+    {
+        <a asp-action="Edit" class="btn btn-primary">Edit profile</a>
+    }
+}
+
+@if (Model?.Friends != null && Model.Friends.Any())
+{
+    <h4 class="mt-4">Friends</h4>
+    <ul class="list-unstyled">
+    @foreach (var f in Model.Friends)
+    {
+        <li class="mb-2">
+            @if (!string.IsNullOrEmpty(f.FriendUser?.AvatarPath))
+            {
+                <img src="@f.FriendUser.AvatarPath" alt="avatar" width="40" height="40" class="rounded-circle me-2" />
+            }
+            <a asp-controller="User" asp-action="Details" asp-route-id="@f.FriendId">@f.FriendUser?.UserName</a>
+        </li>
+    }
+    </ul>
 }

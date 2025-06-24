@@ -4,12 +4,16 @@
 }
 
 <h2>Your friends</h2>
-<ul>
+<ul class="list-unstyled">
 @foreach (var f in Model)
 {
-    <li>
-        @f.FriendUser?.UserName
-        <form asp-action="Remove" method="post" asp-route-id="@f.Id" class="d-inline">
+    <li class="mb-2">
+        @if (!string.IsNullOrEmpty(f.FriendUser?.AvatarPath))
+        {
+            <img src="@f.FriendUser.AvatarPath" alt="avatar" width="40" height="40" class="rounded-circle me-2" />
+        }
+        <a asp-controller="User" asp-action="Details" asp-route-id="@f.FriendId">@f.FriendUser?.UserName</a>
+        <form asp-action="Remove" method="post" asp-route-id="@f.Id" class="d-inline ms-2">
             <button type="submit" class="btn btn-link">Remove</button>
         </form>
     </li>

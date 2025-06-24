@@ -103,4 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    document.querySelectorAll('.read-more').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const p = link.parentElement;
+            p.querySelector('.more-text').classList.remove('d-none');
+            p.querySelector('.ellipsis').classList.add('d-none');
+            link.remove();
+        });
+    });
 });

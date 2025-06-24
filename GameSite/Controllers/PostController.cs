@@ -35,6 +35,10 @@ namespace GameSite.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
+                if (content != null && content.Length > 2000)
+                {
+                    content = content.Substring(0, 2000);
+                }
                 var post = new Post
                 {
                     UserId = user.Id,
@@ -89,6 +93,30 @@ namespace GameSite.Controllers
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
                     return Json(new { liked, likes = count });
+                }
+            }
+            var referer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrEmpty(referer))
+            {
+                return Redirect(referer);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                var post = await _context.Posts
+                    .Include(p => p.Likes)
+                    .FirstOrDefaultAsync(p => p.Id == id && p.UserId == user.Id);
+                if (post != null)
+                {
+                    _context.Likes.RemoveRange(post.Likes);
+                    _context.Posts.Remove(post);
+                    await _context.SaveChangesAsync();
                 }
             }
             var referer = Request.Headers["Referer"].ToString();

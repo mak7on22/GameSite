@@ -13,7 +13,17 @@
         </div>
         @if (!string.IsNullOrEmpty(post.Content))
         {
-            <p>@post.Content</p>
+            if (post.Content.Length > 500)
+            {
+                <p>
+                    @post.Content.Substring(0, 500)<span class="ellipsis">...</span><span class="more-text d-none">@post.Content.Substring(500)</span>
+                    <a href="#" class="read-more">(ещё..)</a>
+                </p>
+            }
+            else
+            {
+                <p>@post.Content</p>
+            }
         }
         @if (!string.IsNullOrEmpty(post.MediaUrl))
         {
@@ -37,9 +47,15 @@
             var currentId = UserManager.GetUserId(User);
             bool liked = post.Likes?.Any(l => l.UserId == currentId) == true;
         }
-        <form asp-controller="Post" asp-action="Like" method="post" asp-route-postId="@post.Id" class="like-form">
+        <form asp-controller="Post" asp-action="Like" method="post" asp-route-postId="@post.Id" class="like-form d-inline">
             <button type="submit" class="btn btn-link p-0 like-btn" data-post-id="@post.Id">@(liked ? "Unlike" : "Like") (@post.Likes?.Count ?? 0)</button>
         </form>
+        @if (currentId == post.UserId)
+        {
+            <form asp-controller="Post" asp-action="Delete" method="post" asp-route-id="@post.Id" class="d-inline ms-2" onsubmit="return confirm('Delete this post?');">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+        }
     </li>
 }
 </ul>

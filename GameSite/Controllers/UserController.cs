@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
 
 namespace GameSite.Controllers
 {
@@ -104,6 +105,11 @@ namespace GameSite.Controllers
 
             if (avatarFile != null && avatarFile.Length > 0)
             {
+                if (!avatarFile.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError("avatarFile", "Only image files are allowed.");
+                    return View(model);
+                }
                 var uploads = Path.Combine("wwwroot", "avatars");
                 Directory.CreateDirectory(uploads);
                 var fileName = user.Id + Path.GetExtension(avatarFile.FileName);
@@ -116,6 +122,25 @@ namespace GameSite.Controllers
             }
             else
             {
+                if (!string.IsNullOrEmpty(model.AvatarPath) && Uri.IsWellFormedUriString(model.AvatarPath, UriKind.Absolute))
+                {
+                    try
+                    {
+                        using var httpClient = new HttpClient();
+                        using var request = new HttpRequestMessage(HttpMethod.Head, model.AvatarPath);
+                        var response = await httpClient.SendAsync(request);
+                        if (!response.IsSuccessStatusCode || response.Content.Headers.ContentType?.MediaType?.StartsWith("image/", StringComparison.OrdinalIgnoreCase) != true)
+                        {
+                            ModelState.AddModelError("AvatarPath", "Avatar URL must point to an image.");
+                            return View(model);
+                        }
+                    }
+                    catch
+                    {
+                        ModelState.AddModelError("AvatarPath", "Invalid Avatar URL.");
+                        return View(model);
+                    }
+                }
                 user.AvatarPath = model.AvatarPath;
             }
 

@@ -4,4 +4,28 @@
 }
 
 <h2>Feed</h2>
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPostModal">Add Post</button>
 @await Html.PartialAsync("_PostList", Model)
+
+<div class="modal fade" id="addPostModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="create-post-form" asp-controller="Post" asp-action="Create" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Feed")" />
+                    <textarea name="content" class="form-control" rows="2" placeholder="Write something..."></textarea>
+                    <input type="file" name="mediaFile" class="form-control mt-2" />
+                    <input type="text" name="link" class="form-control mt-2" placeholder="Link (optional)" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="create-post-form" class="btn btn-primary">Post</button>
+            </div>
+        </div>
+    </div>
+</div>

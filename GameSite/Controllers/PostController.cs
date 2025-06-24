@@ -30,7 +30,7 @@ namespace GameSite.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(string content, IFormFile? mediaFile, string? link)
+        public async Task<IActionResult> Create(string content, IFormFile? mediaFile, string? link, string? returnUrl)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
@@ -60,6 +60,10 @@ namespace GameSite.Controllers
                 _context.Posts.Add(post);
                 await _context.SaveChangesAsync();
             }
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                return LocalRedirect(returnUrl);
+            }
             return RedirectToAction(nameof(Index));
         }
 
@@ -79,6 +83,18 @@ namespace GameSite.Controllers
                     _context.Likes.Remove(existing);
                 }
                 await _context.SaveChangesAsync();
+                bool liked = existing == null;
+                int count = await _context.Likes.CountAsync(l => l.PostId == postId);
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { liked, likes = count });
+                }
+            }
+            var referer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrEmpty(referer))
+            {
+                return Redirect(referer);
             }
             return RedirectToAction(nameof(Index));
         }

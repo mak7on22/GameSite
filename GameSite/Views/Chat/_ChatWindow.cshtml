@@ -1,10 +1,12 @@
 @model GameSite.Models.ChatWindowViewModel
+@using System.Security.Claims
+
 <div>
     <h5 class="border-bottom pb-2 mb-2">Chat with @Model.Friend.UserName</h5>
     <div id="messages" class="border mb-2 p-2" style="height:250px; overflow-y:auto;">
         @foreach (var m in Model.Messages)
         {
-            var own = m.SenderId == User.FindFirst("sub")?.Value;
+            var own = m.SenderId == User.FindFirstValue(ClaimTypes.NameIdentifier);
             <div class="mb-1 @(own ? "text-end" : "text-start")">
                 <strong>@(own ? "You" : Model.Friend.UserName) @m.Created.ToLocalTime().ToString("HH:mm")</strong><br />
                 @m.Content

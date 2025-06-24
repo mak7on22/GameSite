@@ -9,24 +9,19 @@ namespace GameSite.Services
 {
     public class EmailSender : IEmailSender
     {
-        private readonly EmailSettings _settings;
-
-        public EmailSender(IOptions<EmailSettings> options)
+        public Task SendEmailAsync(string email, string subject, string message)
         {
-            _settings = options.Value;
-        }
+            var mail = "ms.tdlist@mail.ru";
+            var pw = "DMcT6Nlf8c6JNppeF0Yd";
 
-        public Task SendEmailAsync(string email, string subject, string htmlMessage)
-        {
-            var client = new SmtpClient(_settings.SmtpServer, _settings.SmtpPort)
+            var client = new SmtpClient("smtp.mail.ru", 587)
             {
                 EnableSsl = true,
-                Credentials = new NetworkCredential(_settings.FromEmail, _settings.Password),
+                Credentials = new NetworkCredential(mail, pw),
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false
             };
-
-            var mailMessage = new MailMessage(_settings.FromEmail, email, subject, htmlMessage)
+            var mailMessage = new MailMessage(from: mail, to: email, subject, message)
             {
                 IsBodyHtml = true,
                 BodyEncoding = Encoding.UTF8

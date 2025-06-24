@@ -69,12 +69,16 @@ namespace GameSite.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
-                var exists = await _context.Likes.FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == user.Id);
-                if (exists == null)
+                var existing = await _context.Likes.FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == user.Id);
+                if (existing == null)
                 {
                     _context.Likes.Add(new Like { PostId = postId, UserId = user.Id });
-                    await _context.SaveChangesAsync();
                 }
+                else
+                {
+                    _context.Likes.Remove(existing);
+                }
+                await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
         }

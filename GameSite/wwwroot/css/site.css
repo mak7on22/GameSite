@@ -43,3 +43,35 @@ body {
   background-color: #333333;
   color: #ffffff;
 }
+.theme-light {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.theme-dark {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.theme-dark .navbar {
+  background-color: #333333;
+}
+
+.theme-dark .dropdown-menu {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.theme-dark .nav-link,
+.theme-dark .navbar-brand,
+.theme-dark .text-dark {
+  color: #ffffff !important;
+}
+
+.theme-dark .text-muted {
+  color: #cccccc !important;
+}
+
+.theme-dark .bg-white {
+  background-color: #1f1f1f !important;
+}

@@ -52,7 +52,9 @@ function getPreferredTheme() {
 }
 
 function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.classList.remove("theme-dark", "theme-light");
+    document.documentElement.classList.add(theme === "dark" ? "theme-dark" : "theme-light");
 }
 
 applyTheme(getPreferredTheme());

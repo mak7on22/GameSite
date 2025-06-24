@@ -37,13 +37,18 @@ namespace GameSite
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddTransient<IEmailService, EmailSender>();
             builder.Services.AddTransient<IGoogleAuthService, GoogleAuthService>();
-            builder.Services.AddAuthentication()
-                .AddGoogle(options =>
+            var authenticationBuilder = builder.Services.AddAuthentication();
+            var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+            var clientId = googleAuth["ClientId"];
+            var clientSecret = googleAuth["ClientSecret"];
+            if (!string.IsNullOrEmpty(clientId) && !string.IsNullOrEmpty(clientSecret))
+            {
+                authenticationBuilder.AddGoogle(options =>
                 {
-                    var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-                    options.ClientId = googleAuth["ClientId"]!;
-                    options.ClientSecret = googleAuth["ClientSecret"]!;
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
                 });
+            }
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();

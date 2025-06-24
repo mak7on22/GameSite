@@ -56,8 +56,13 @@ namespace GameSite.Controllers
             return RedirectToPage("/Account/Manage/ChangePassword", new { area = "Identity" });
         }
 
-        public IActionResult GoogleLogin(string returnUrl = "/")
+        public async Task<IActionResult> GoogleLogin(string returnUrl = "/")
         {
+            if (!await _googleAuthService.IsConfiguredAsync())
+            {
+                return NotFound();
+            }
+
             var redirectUrl = Url.Action(nameof(GoogleResponse), "Account", new { ReturnUrl = returnUrl });
             var properties = _googleAuthService.ConfigureExternalAuthenticationProperties(redirectUrl!);
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);

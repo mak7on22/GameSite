@@ -3,22 +3,27 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using GameSite.Models;
+using GameSite.Services;
 
 namespace GameSite.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IGoogleAuthService _googleAuthService;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager)
+        public LoginModel(SignInManager<ApplicationUser> signInManager,
+            IGoogleAuthService googleAuthService)
         {
             _signInManager = signInManager;
+            _googleAuthService = googleAuthService;
         }
 
         [BindProperty]
         public InputModel Input { get; set; } = new();
 
         public string? ReturnUrl { get; set; }
+        public bool GoogleLoginEnabled { get; private set; }
 
         public class InputModel
         {
@@ -34,9 +39,10 @@ namespace GameSite.Areas.Identity.Pages.Account
             public bool RememberMe { get; set; }
         }
 
-        public void OnGet(string? returnUrl = null)
+        public async Task OnGetAsync(string? returnUrl = null)
         {
             ReturnUrl = returnUrl;
+            GoogleLoginEnabled = await _googleAuthService.IsConfiguredAsync();
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)

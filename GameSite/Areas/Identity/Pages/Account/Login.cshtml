@@ -22,7 +22,10 @@
         <label asp-for="Input.RememberMe" class="form-check-label"></label>
     </div>
     <button type="submit" class="btn btn-primary">Log in</button>
-    <a asp-controller="Account" asp-action="GoogleLogin" class="btn btn-danger ms-2">Google</a>
+    @if (Model.GoogleLoginEnabled)
+    {
+        <a asp-controller="Account" asp-action="GoogleLogin" class="btn btn-danger ms-2">Google</a>
+    }
 </form>
 
 @section Scripts {

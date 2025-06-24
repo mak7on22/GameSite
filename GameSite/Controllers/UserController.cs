@@ -50,6 +50,8 @@ namespace GameSite.Controllers
 
             if (!string.Equals(user.UserName, model.UserName, StringComparison.Ordinal))
             {
+                bool wasEmail = string.Equals(user.UserName, user.Email, StringComparison.OrdinalIgnoreCase);
+
                 var setNameResult = await _userManager.SetUserNameAsync(user, model.UserName);
                 if (!setNameResult.Succeeded)
                 {
@@ -58,6 +60,11 @@ namespace GameSite.Controllers
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                     return View(model);
+                }
+
+                if (wasEmail)
+                {
+                    user.Balance += 100;
                 }
             }
 

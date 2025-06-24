@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using GameSite.Models;
 using GameSite.Services;
+using System.Security.Claims;
 
 namespace GameSite.Controllers
 {

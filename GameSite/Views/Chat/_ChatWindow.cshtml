@@ -4,8 +4,9 @@
     <div id="messages" class="border mb-2 p-2" style="height:250px; overflow-y:auto;">
         @foreach (var m in Model.Messages)
         {
-            <div class="mb-1">
-                <strong>@(m.SenderId == User.FindFirst("sub")?.Value ? "You" : Model.Friend.UserName)</strong>:
+            var own = m.SenderId == User.FindFirst("sub")?.Value;
+            <div class="mb-1 @(own ? "text-end" : "text-start")">
+                <strong>@(own ? "You" : Model.Friend.UserName) @m.Created.ToLocalTime().ToString("HH:mm")</strong><br />
                 @m.Content
                 @if (!string.IsNullOrEmpty(m.MediaPath))
                 {

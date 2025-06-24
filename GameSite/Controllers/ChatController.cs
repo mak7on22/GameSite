@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GameSite.Data;
 using GameSite.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace GameSite.Controllers
 {
@@ -12,11 +13,13 @@ namespace GameSite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHubContext<GameSite.Hubs.ChatHub> _hubContext;
 
-        public ChatController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ChatController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IHubContext<GameSite.Hubs.ChatHub> hubContext)
         {
             _context = context;
             _userManager = userManager;
+            _hubContext = hubContext;
         }
 
         public async Task<IActionResult> Index()
@@ -113,7 +116,25 @@ namespace GameSite.Controllers
             _context.ChatMessages.Add(msg);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Window), new { friendId });
+            await _hubContext.Clients.User(friendId).SendAsync("ReceiveMessage", new
+            {
+                senderId = user.Id,
+                senderName = user.UserName,
+                content = msg.Content,
+                mediaPath = msg.MediaPath,
+                isOwn = false
+            });
+
+            await _hubContext.Clients.User(user.Id).SendAsync("ReceiveMessage", new
+            {
+                senderId = user.Id,
+                senderName = user.UserName,
+                content = msg.Content,
+                mediaPath = msg.MediaPath,
+                isOwn = true
+            });
+
+            return Ok();
         }
     }
 }

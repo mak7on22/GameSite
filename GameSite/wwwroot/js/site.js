@@ -182,7 +182,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res.ok) {
                 const html = await res.text();
                 const win = document.getElementById('chat-window');
-                if (win) win.innerHTML = html;
+                if (win) {
+                    win.innerHTML = html;
+                    if (typeof initChat === 'function') initChat();
+                }
             }
         }
     });

@@ -1,1 +1,12 @@
-@* Placeholder for Game views *@
+@model GameSite.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Game";
+}
+
+<h2>Game</h2>
+<p>Your XP: @Model?.XP</p>
+
+<form asp-action="AddXp" method="post">
+    <input type="hidden" name="amount" value="10" />
+    <button type="submit" class="btn btn-primary">Gain 10 XP</button>
+</form>

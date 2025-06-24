@@ -89,3 +89,14 @@ body {
 .theme-dark .bg-white {
   background-color: #1f1f1f !important;
 }
+
+#webgl-container {
+  width: 100%;
+  height: 300px;
+}
+
+#webgl-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

@@ -17,7 +17,7 @@
             <div class="modal-body">
                 <form id="create-post-form" asp-controller="Post" asp-action="Create" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Feed")" />
-                    <textarea name="content" class="form-control" rows="2" placeholder="Write something..."></textarea>
+                    <textarea name="content" class="form-control" rows="2" placeholder="Write something..." maxlength="2000"></textarea>
                     <input type="file" name="mediaFile" class="form-control mt-2" />
                     <input type="text" name="link" class="form-control mt-2" placeholder="Link (optional)" />
                 </form>

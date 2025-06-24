@@ -122,6 +122,7 @@ namespace GameSite.Controllers
                 senderName = user.UserName,
                 content = msg.Content,
                 mediaPath = msg.MediaPath,
+                created = msg.Created,
                 isOwn = false
             });
 
@@ -131,6 +132,7 @@ namespace GameSite.Controllers
                 senderName = user.UserName,
                 content = msg.Content,
                 mediaPath = msg.MediaPath,
+                created = msg.Created,
                 isOwn = true
             });
 

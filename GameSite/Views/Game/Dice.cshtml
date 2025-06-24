@@ -1,0 +1,28 @@
+@model GameSite.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Dice";
+}
+
+<h2>Dice</h2>
+<p>Your XP: @Model?.XP</p>
+
+<div class="mb-3">
+    <label class="form-label">Choose your number:</label>
+    <div id="dice-choice" class="btn-group" role="group">
+@for (int i = 1; i <= 6; i++)
+{
+        <input type="radio" class="btn-check" name="guess" id="guess@i" value="@i" autocomplete="off">
+        <label class="btn btn-outline-primary" for="guess@i">@i</label>
+}
+    </div>
+</div>
+<button id="roll-btn" class="btn btn-primary mb-3">Roll</button>
+<p id="dice-message" class="mt-2"></p>
+<div id="dice-container">
+    <canvas id="dice-canvas"></canvas>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/three@0.164/build/three.min.js"></script>
+    <script src="~/js/dice.js" asp-append-version="true"></script>
+}

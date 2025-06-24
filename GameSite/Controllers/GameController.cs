@@ -24,6 +24,12 @@ namespace GameSite.Controllers
             return View(user);
         }
 
+        public async Task<IActionResult> Dice()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return View(user);
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddXp(int amount)
         {

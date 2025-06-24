@@ -32,5 +32,26 @@ namespace GameSite.Controllers
             var users = await q.ToListAsync();
             return View(users);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetStats(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+            user.Balance = 0;
+            user.Rank = 0;
+            user.XP = 0;
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+            await _userManager.DeleteAsync(user);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

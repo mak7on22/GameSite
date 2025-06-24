@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using GameSite.Services;
 using Microsoft.AspNetCore.Authentication.Google;
+using GameSite.Hubs;
 
 namespace GameSite
 {
@@ -51,6 +52,7 @@ namespace GameSite
                 });
             }
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -88,6 +90,7 @@ namespace GameSite
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.MapHub<ChatHub>("/chathub");
             app.MapRazorPages();
 
             app.Run();

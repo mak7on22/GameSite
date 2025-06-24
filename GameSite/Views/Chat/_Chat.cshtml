@@ -1,0 +1,16 @@
+@model IEnumerable<GameSite.Models.Friend>
+<div class="row" style="height:100%;">
+    <div class="col-4 border-end" id="chat-friends" style="overflow-y:auto;">
+        <ul class="list-unstyled">
+        @foreach (var f in Model)
+        {
+            <li class="mb-2">
+                <a href="#" class="chat-friend-link text-decoration-none" data-friend-id="@f.FriendId">@f.FriendUser?.UserName</a>
+            </li>
+        }
+        </ul>
+    </div>
+    <div class="col-8" id="chat-window">
+        <div class="p-2 text-muted">Select a friend to start chat.</div>
+    </div>
+</div>

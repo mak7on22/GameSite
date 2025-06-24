@@ -167,8 +167,40 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.reload();
                 });
                 div.appendChild(btn);
-                friendResults.appendChild(div);
-            });
+            friendResults.appendChild(div);
+        });
+    });
+}
+
+    const chatLink = document.getElementById('chat-link');
+    const chatContainer = document.getElementById('chat-container');
+    if (chatLink && chatContainer) {
+        chatLink.addEventListener('click', async e => {
+            e.preventDefault();
+            if (chatContainer.style.display === 'none' || chatContainer.style.display === '') {
+                if (chatContainer.innerHTML.trim() === '') {
+                    const res = await fetch('/Chat/Panel');
+                    if (res.ok) {
+                        chatContainer.innerHTML = await res.text();
+                    }
+                }
+                chatContainer.style.display = 'block';
+            } else {
+                chatContainer.style.display = 'none';
+            }
         });
     }
+
+    document.addEventListener('click', async e => {
+        if (e.target.classList.contains('chat-friend-link')) {
+            e.preventDefault();
+            const id = e.target.dataset.friendId;
+            const res = await fetch(`/Chat/Window?friendId=${encodeURIComponent(id)}`);
+            if (res.ok) {
+                const html = await res.text();
+                const win = document.getElementById('chat-window');
+                if (win) win.innerHTML = html;
+            }
+        }
+    });
 });

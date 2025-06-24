@@ -10,7 +10,18 @@
     {
         <img src="@Model.User.AvatarPath" alt="avatar" class="img-thumbnail mb-2" style="max-width:150px;" />
     }
-    <p>UserName: @Model.User.UserName</p>
+    <p>
+        UserName: @Model.User.UserName
+        @{
+            var color = Model.User.Status switch
+            {
+                GameSite.Models.UserStatus.Online => "status-online",
+                GameSite.Models.UserStatus.DoNotDisturb => "status-dnd",
+                _ => "status-offline"
+            };
+        }
+        <span class="status-dot @color"></span>
+    </p>
     <p>Your ID: @Model.User.UniqueId</p>
     <p>Email: @Model.User.Email</p>
     <p>Balance: @Model.User.Balance.ToString("0") GameCoins</p>
@@ -34,7 +45,22 @@
                 <img src="@f.FriendUser.AvatarPath" alt="avatar" width="40" height="40" class="rounded-circle me-2" />
             }
             <a asp-controller="User" asp-action="Details" asp-route-id="@f.FriendId">@f.FriendUser?.UserName</a>
+            @{
+                var color = f.FriendUser?.Status switch
+                {
+                    GameSite.Models.UserStatus.Online => "status-online",
+                    GameSite.Models.UserStatus.DoNotDisturb => "status-dnd",
+                    _ => "status-offline"
+                };
+            }
+            <span class="status-dot @color"></span>
         </li>
     }
     </ul>
+}
+
+@if (Model?.Posts != null && Model.Posts.Any())
+{
+    <h4 class="mt-4">Posts</h4>
+    @await Html.PartialAsync("_PostList", Model.Posts)
 }

@@ -17,7 +17,9 @@ namespace GameSite.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var posts = await _context.Posts.Include(p => p.User)
+            var posts = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.Created)
                 .ToListAsync();
             return View(posts);

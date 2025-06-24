@@ -8,6 +8,9 @@ namespace GameSite.Models
         public string? UserId { get; set; }
         public ApplicationUser? User { get; set; }
         public string Content { get; set; } = string.Empty;
+        public string? MediaUrl { get; set; }
         public DateTime Created { get; set; }
+
+        public ICollection<Like> Likes { get; set; } = new List<Like>();
     }
 }

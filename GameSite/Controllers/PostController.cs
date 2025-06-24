@@ -21,19 +21,43 @@ namespace GameSite.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var posts = await _context.Posts.Include(p => p.User)
+            var posts = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.Created)
                 .ToListAsync();
             return View(posts);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(string content)
+        public async Task<IActionResult> Create(string content, IFormFile? mediaFile, string? link)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (!string.IsNullOrWhiteSpace(content) && user != null)
+            if (user != null)
             {
-                _context.Posts.Add(new Post { UserId = user.Id, Content = content, Created = DateTime.UtcNow });
+                var post = new Post
+                {
+                    UserId = user.Id,
+                    Content = content ?? string.Empty,
+                    Created = DateTime.UtcNow
+                };
+
+                if (mediaFile != null && mediaFile.Length > 0)
+                {
+                    var uploads = Path.Combine("wwwroot", "posts");
+                    Directory.CreateDirectory(uploads);
+                    var fileName = Guid.NewGuid().ToString("N") + Path.GetExtension(mediaFile.FileName);
+                    var path = Path.Combine(uploads, fileName);
+                    using var stream = new FileStream(path, FileMode.Create);
+                    await mediaFile.CopyToAsync(stream);
+                    post.MediaUrl = "/posts/" + fileName;
+                }
+                else if (!string.IsNullOrWhiteSpace(link))
+                {
+                    post.MediaUrl = link;
+                }
+
+                _context.Posts.Add(post);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));

@@ -3,20 +3,11 @@
     ViewData["Title"] = "Posts";
 }
 
-<form asp-action="Create" method="post" class="mb-3">
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="mb-3">
     <textarea name="content" class="form-control" rows="2" placeholder="Write something..."></textarea>
+    <input type="file" name="mediaFile" class="form-control mt-2" />
+    <input type="text" name="link" class="form-control mt-2" placeholder="Link (optional)" />
     <button type="submit" class="btn btn-primary mt-2">Post</button>
 </form>
 
-<ul>
-@foreach (var post in Model)
-{
-    <li>
-        <strong>@post.User?.UserName</strong> (@post.Created.ToLocalTime()):
-        @post.Content
-        <form asp-action="Like" method="post" asp-route-postId="@post.Id" class="d-inline">
-            <button type="submit" class="btn btn-link">Like</button>
-        </form>
-    </li>
-}
-</ul>
+@await Html.PartialAsync("_PostList", Model)

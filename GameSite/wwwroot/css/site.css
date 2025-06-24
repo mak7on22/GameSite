@@ -65,6 +65,17 @@ body {
   color: #ffffff;
 }
 
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-online { background-color: #28a745; }
+.status-offline { background-color: #6c757d; }
+.status-dnd { background-color: #dc3545; }
+
 .theme-dark .nav-link,
 .theme-dark .navbar-brand,
 .theme-dark .text-dark {

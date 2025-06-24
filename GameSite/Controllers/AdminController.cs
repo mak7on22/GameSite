@@ -6,7 +6,7 @@ using GameSite.Models;
 
 namespace GameSite.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Operator")]
     public class AdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -18,9 +18,18 @@ namespace GameSite.Controllers
             _roleManager = roleManager;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? query)
         {
-            var users = await _userManager.Users.ToListAsync();
+            var q = _userManager.Users.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                query = query.Trim();
+                q = q.Where(u => u.Id.Contains(query) ||
+                                 (u.UserName != null && u.UserName.Contains(query)) ||
+                                 (u.Email != null && u.Email.Contains(query)));
+            }
+
+            var users = await q.ToListAsync();
             return View(users);
         }
     }

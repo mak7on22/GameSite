@@ -4,16 +4,25 @@
 }
 
 <h2>Users</h2>
+
+<form method="get" class="mb-3">
+    <input type="text" name="query" class="form-control" placeholder="Search by id, username or email" value="@Context.Request.Query["query"]" />
+</form>
+
 <table class="table">
     <tr>
         <th>UserName</th>
         <th>Email</th>
+        <th>Rank</th>
+        <th>Balance</th>
     </tr>
 @foreach (var user in Model)
 {
     <tr>
-        <td>@user.UserName</td>
+        <td><a asp-controller="User" asp-action="Details" asp-route-id="@user.Id">@user.UserName</a></td>
         <td>@user.Email</td>
+        <td>@user.Rank</td>
+        <td>@user.Balance.ToString("0")</td>
     </tr>
 }
 </table>

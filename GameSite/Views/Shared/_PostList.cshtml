@@ -1,0 +1,38 @@
+@model IEnumerable<GameSite.Models.Post>
+
+<ul class="list-unstyled">
+@foreach (var post in Model)
+{
+    <li class="mb-3 border p-2">
+        <div class="mb-1">
+            <a asp-controller="User" asp-action="Details" asp-route-id="@post.UserId">@post.User?.UserName</a>
+            <small class="text-muted">@post.Created.ToLocalTime()</small>
+        </div>
+        @if (!string.IsNullOrEmpty(post.Content))
+        {
+            <p>@post.Content</p>
+        }
+        @if (!string.IsNullOrEmpty(post.MediaUrl))
+        {
+            var ext = System.IO.Path.GetExtension(post.MediaUrl).ToLower();
+            if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif")
+            {
+                <img src="@post.MediaUrl" alt="post image" class="img-fluid mb-1" />
+            }
+            else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg")
+            {
+                <video controls class="img-fluid mb-1">
+                    <source src="@post.MediaUrl" />
+                </video>
+            }
+            else
+            {
+                <p><a href="@post.MediaUrl" target="_blank">@post.MediaUrl</a></p>
+            }
+        }
+        <form asp-controller="Post" asp-action="Like" method="post" asp-route-postId="@post.Id">
+            <button type="submit" class="btn btn-link p-0">Like (@post.Likes?.Count ?? 0)</button>
+        </form>
+    </li>
+}
+</ul>

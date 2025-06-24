@@ -42,11 +42,26 @@ namespace GameSite.Controllers
                 .Where(f => f.UserId == user.Id)
                 .ToListAsync();
 
+            var posts = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.Likes)
+                .Where(p => p.UserId == user.Id)
+                .OrderByDescending(p => p.Created)
+                .ToListAsync();
+
+            var posts = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.Likes)
+                .Where(p => p.UserId == user.Id)
+                .OrderByDescending(p => p.Created)
+                .ToListAsync();
+
             var model = new UserProfileViewModel
             {
                 User = user,
                 Friends = friends,
-                IsSelf = true
+                IsSelf = true,
+                Posts = posts
             };
 
             return View(model);
@@ -76,7 +91,8 @@ namespace GameSite.Controllers
             {
                 User = user,
                 Friends = friends,
-                IsSelf = current != null && current.Id == user.Id
+                IsSelf = current != null && current.Id == user.Id,
+                Posts = posts
             };
 
             return View("Index", model);

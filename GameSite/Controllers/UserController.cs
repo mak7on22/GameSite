@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace GameSite.Controllers
 {
@@ -120,6 +121,12 @@ namespace GameSite.Controllers
 
             if (!string.Equals(user.UserName, model.UserName, StringComparison.Ordinal))
             {
+                if (new EmailAddressAttribute().IsValid(model.UserName))
+                {
+                    ModelState.AddModelError("UserName", "Username cannot be an email address.");
+                    return View(model);
+                }
+
                 bool wasEmail = string.Equals(user.UserName, user.Email, StringComparison.OrdinalIgnoreCase);
 
                 var setNameResult = await _userManager.SetUserNameAsync(user, model.UserName);

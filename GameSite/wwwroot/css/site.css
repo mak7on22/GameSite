@@ -29,3 +29,17 @@ body {
   width: 100%;
   z-index: 1000;
 }
+
+[data-theme="dark"] {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .navbar {
+  background-color: #333333;
+}
+
+[data-theme="dark"] .dropdown-menu {
+  background-color: #333333;
+  color: #ffffff;
+}

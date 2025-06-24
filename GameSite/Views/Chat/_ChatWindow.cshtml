@@ -14,9 +14,9 @@
             </div>
         }
     </div>
-    <form asp-controller="Chat" asp-action="Send" asp-route-friendId="@Model.Friend.Id" enctype="multipart/form-data">
+    <form id="chat-form" asp-controller="Chat" asp-action="Send" asp-route-friendId="@Model.Friend.Id" data-friend-id="@Model.Friend.Id" enctype="multipart/form-data">
         <div class="input-group">
-            <input type="text" name="message" class="form-control" placeholder="Type a message..." />
+            <input type="text" id="chat-message" name="message" class="form-control" placeholder="Type a message..." />
             <input type="file" name="image" class="form-control" />
             <button type="submit" class="btn btn-primary">Send</button>
         </div>

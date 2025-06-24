@@ -1,1 +1,19 @@
-@* Placeholder for Admin views *@
+@model IEnumerable<GameSite.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<h2>Users</h2>
+<table class="table">
+    <tr>
+        <th>UserName</th>
+        <th>Email</th>
+    </tr>
+@foreach (var user in Model)
+{
+    <tr>
+        <td>@user.UserName</td>
+        <td>@user.Email</td>
+    </tr>
+}
+</table>

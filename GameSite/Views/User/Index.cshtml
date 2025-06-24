@@ -1,1 +1,13 @@
-@* Placeholder for User views *@
+@model GameSite.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h2>Your profile</h2>
+@if (Model != null)
+{
+    <p>UserName: @Model.UserName</p>
+    <p>XP: @Model.XP</p>
+    <p>Rank: @Model.Rank</p>
+    <a asp-action="Edit" class="btn btn-primary">Edit profile</a>
+}

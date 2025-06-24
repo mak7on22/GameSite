@@ -1,1 +1,22 @@
-@* Placeholder for Friends views *@
+@model IEnumerable<GameSite.Models.Friend>
+@{
+    ViewData["Title"] = "Friends";
+}
+
+<h2>Your friends</h2>
+<ul>
+@foreach (var f in Model)
+{
+    <li>
+        @f.FriendUser?.UserName
+        <form asp-action="Remove" method="post" asp-route-id="@f.Id" class="d-inline">
+            <button type="submit" class="btn btn-link">Remove</button>
+        </form>
+    </li>
+}
+</ul>
+
+<form asp-action="Add" method="post">
+    <input type="text" name="friendId" placeholder="Friend user id" class="form-control mb-2" />
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>

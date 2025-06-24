@@ -1,1 +1,12 @@
-@* Placeholder for Feed views *@
+@model IEnumerable<GameSite.Models.Post>
+@{
+    ViewData["Title"] = "Feed";
+}
+
+<h2>Feed</h2>
+<ul>
+@foreach (var post in Model)
+{
+    <li><strong>@post.User?.UserName</strong>: @post.Content</li>
+}
+</ul>

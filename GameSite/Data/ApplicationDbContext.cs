@@ -18,22 +18,6 @@ namespace GameSite.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            builder.Entity<ApplicationUser>()
-                .HasIndex(u => u.UniqueId)
-                .IsUnique();
-
-            builder.Entity<ApplicationUser>()
-                .HasMany(u => u.Friends)
-                .WithOne(f => f.User)
-                .HasForeignKey(f => f.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<Friend>()
-                .HasOne(f => f.FriendUser)
-                .WithMany()
-                .HasForeignKey(f => f.FriendId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

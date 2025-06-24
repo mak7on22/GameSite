@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using System;
 using System.Collections.Generic;
 
 namespace GameSite.Models
 {
+    [Index(nameof(UniqueId), IsUnique = true)]
     public class ApplicationUser : IdentityUser
     {
         public string UniqueId { get; set; } = Guid.NewGuid().ToString("N").Substring(0, 8);
@@ -14,6 +17,7 @@ namespace GameSite.Models
         public int Rank { get; set; }
         public int XP { get; set; }
 
+        [InverseProperty(nameof(Friend.User))]
         public ICollection<Friend>? Friends { get; set; }
         public ICollection<Like>? Likes { get; set; }
 

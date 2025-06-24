@@ -95,8 +95,8 @@ namespace GameSite.Areas.Identity.Pages.Account.Manage
                 unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
             }
 
-            SharedKey = FormatKey(unformattedKey);
-            AuthenticatorUri = GenerateQrCodeUri(user.Email!, unformattedKey);
+            SharedKey = FormatKey(unformattedKey!);
+            AuthenticatorUri = GenerateQrCodeUri(user.Email!, unformattedKey!);
         }
 
         private static string FormatKey(string unformattedKey)

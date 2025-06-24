@@ -30,7 +30,8 @@ body {
   z-index: 1000;
 }
 
-[data-theme="dark"] {
+[data-theme="dark"],
+[data-theme="dark"] body {
   background-color: #121212;
   color: #ffffff;
 }
@@ -43,12 +44,14 @@ body {
   background-color: #333333;
   color: #ffffff;
 }
-.theme-light {
+.theme-light,
+.theme-light body {
   background-color: #ffffff;
   color: #000000;
 }
 
-.theme-dark {
+.theme-dark,
+.theme-dark body {
   background-color: #121212;
   color: #ffffff;
 }

@@ -43,14 +43,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     animate();
 
-    document.getElementById('roll-btn')?.addEventListener('click', () => {
+    document.getElementById('roll-btn')?.addEventListener('click', async () => {
         const guessEl = document.querySelector('input[name="guess"]:checked');
         const message = document.getElementById('dice-message');
         if (!guessEl) {
             if (message) message.textContent = 'Choose a number first';
             return;
         }
-        const result = Math.floor(Math.random() * 6) + 1;
+
+        const res = await fetch('/Game/PlayDice', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: `guess=${encodeURIComponent(guessEl.value)}`
+        });
+        if (!res.ok) {
+            if (message) message.textContent = 'Error rolling dice';
+            return;
+        }
+
+        const data = await res.json();
         const rotations = {
             1: [0, 0, 0],
             2: [0, Math.PI / 2, 0],
@@ -59,10 +73,12 @@ document.addEventListener('DOMContentLoaded', function () {
             5: [-Math.PI / 2, 0, 0],
             6: [Math.PI / 2, 0, 0]
         };
-        const [rx, ry, rz] = rotations[result];
+        const [rx, ry, rz] = rotations[data.roll];
         cube.rotation.set(rx, ry, rz);
-        if (message) {
-            message.textContent = result == guessEl.value ? 'You guessed right! +10 XP' : `You rolled ${result}`;
-        }
+        if (message) message.textContent = data.message;
+        const xpDisplay = document.getElementById('xp-display');
+        const balanceDisplay = document.getElementById('balance-display');
+        if (xpDisplay) xpDisplay.textContent = data.xp;
+        if (balanceDisplay) balanceDisplay.textContent = data.balance;
     });
 });

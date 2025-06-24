@@ -1,8 +1,24 @@
-@model GameSite.Models.ApplicationUser
+@model GameSite.Models.ChatWindowViewModel
 <div>
-    <h5 class="border-bottom pb-2 mb-2">Chat with @Model.UserName</h5>
+    <h5 class="border-bottom pb-2 mb-2">Chat with @Model.Friend.UserName</h5>
     <div id="messages" class="border mb-2 p-2" style="height:250px; overflow-y:auto;">
-        <p class="text-muted">Chat not implemented.</p>
+        @foreach (var m in Model.Messages)
+        {
+            <div class="mb-1">
+                <strong>@(m.SenderId == User.FindFirst("sub")?.Value ? "You" : Model.Friend.UserName)</strong>:
+                @m.Content
+                @if (!string.IsNullOrEmpty(m.MediaPath))
+                {
+                    <div><img src="@m.MediaPath" class="img-fluid mt-1" /></div>
+                }
+            </div>
+        }
     </div>
-    <input type="text" class="form-control" placeholder="Type a message..." disabled />
+    <form asp-controller="Chat" asp-action="Send" asp-route-friendId="@Model.Friend.Id" enctype="multipart/form-data">
+        <div class="input-group">
+            <input type="text" name="message" class="form-control" placeholder="Type a message..." />
+            <input type="file" name="image" class="form-control" />
+            <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+    </form>
 </div>

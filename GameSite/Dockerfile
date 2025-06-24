@@ -1,32 +1,26 @@
-# См. статью по ссылке https://aka.ms/customizecontainer, чтобы узнать как настроить контейнер отладки и как Visual Studio использует этот Dockerfile для создания образов для ускорения отладки.
+# Этап 1: SDK-образ для сборки
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
 
-# В зависимости от операционной системы хост-компьютеров, которые будут выполнять сборку контейнеров или запускать их, может потребоваться изменить образ, указанный в инструкции FROM.
-# Дополнительные сведения см. на странице https://aka.ms/containercompat
+# Копируем .csproj и восстанавливаем зависимости
+COPY ["GameSite/GameSite.csproj", "GameSite/"]
+RUN dotnet restore "./GameSite/GameSite.csproj"
 
-# Этот этап используется при запуске из VS в быстром режиме (по умолчанию для конфигурации отладки)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809 AS base
+# Копируем весь остальной код
+COPY . .
+WORKDIR "/src/GameSite"
+RUN dotnet build "GameSite.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# Этап 2: публикация
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "GameSite.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+# Этап 3: запуск
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
-
-
-# Этот этап используется для сборки проекта службы
-FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["GameSite/GameSite.csproj", "GameSite/"]
-RUN dotnet restore "./GameSite/GameSite.csproj"
-COPY . .
-WORKDIR "/src/GameSite"
-RUN dotnet build "./GameSite.csproj" -c %BUILD_CONFIGURATION% -o /app/build
-
-# Этот этап используется для публикации проекта службы, который будет скопирован на последний этап
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./GameSite.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
-
-# Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
-FROM base AS final
-WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "GameSite.dll"]

@@ -6,6 +6,7 @@ namespace GameSite.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public string UniqueId { get; set; } = Guid.NewGuid().ToString("N").Substring(0, 8);
         public string? AvatarPath { get; set; }
         public decimal Balance { get; set; }
         public DateTime RegistrationDate { get; set; }

@@ -5,7 +5,6 @@ using GameSite.Models;
 using GameSite.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
 using System;
 using System.IO;
 using System.Linq;
@@ -20,17 +19,14 @@ namespace GameSite.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _env;
 
         public UserController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ApplicationDbContext context,
-            IWebHostEnvironment env)
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
-            _env = env;
         }
 
         public async Task<IActionResult> Index()
@@ -130,7 +126,7 @@ namespace GameSite.Controllers
                     ModelState.AddModelError("avatarFile", "Only image files are allowed.");
                     return View(model);
                 }
-                var uploads = Path.Combine(_env.WebRootPath, "avatars");
+                var uploads = Path.Combine("wwwroot", "avatars");
                 Directory.CreateDirectory(uploads);
                 var fileName = user.Id + Path.GetExtension(avatarFile.FileName);
                 var path = Path.Combine(uploads, fileName);
@@ -202,19 +198,6 @@ namespace GameSite.Controllers
 
             await _signInManager.RefreshSignInAsync(user);
 
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateStatus(UserStatus status)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user != null)
-            {
-                user.Status = status;
-                await _userManager.UpdateAsync(user);
-                await _signInManager.RefreshSignInAsync(user);
-            }
             return RedirectToAction(nameof(Index));
         }
     }

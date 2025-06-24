@@ -1,7 +1,4 @@
 @model IEnumerable<GameSite.Models.Post>
-@using GameSite.Models
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> UserManager
 
 <ul class="list-unstyled">
 @foreach (var post in Model)
@@ -33,12 +30,8 @@
                 <p><a href="@post.MediaUrl" target="_blank">@post.MediaUrl</a></p>
             }
         }
-        {
-            var currentId = UserManager.GetUserId(User);
-            bool liked = post.Likes?.Any(l => l.UserId == currentId) == true;
-        }
         <form asp-controller="Post" asp-action="Like" method="post" asp-route-postId="@post.Id">
-            <button type="submit" class="btn btn-link p-0">@(liked ? "Unlike" : "Like") (@post.Likes?.Count ?? 0)</button>
+            <button type="submit" class="btn btn-link p-0">Like (@post.Likes?.Count ?? 0)</button>
         </form>
     </li>
 }

@@ -29,14 +29,6 @@
     <p>Rank: @Model.User.Rank</p>
     @if (Model.IsSelf)
     {
-        <form asp-action="UpdateStatus" method="post" class="mb-2">
-            <select name="status" class="form-select d-inline w-auto">
-                <option value="@GameSite.Models.UserStatus.Online" @(Model.User.Status == GameSite.Models.UserStatus.Online ? "selected" : null)>Online</option>
-                <option value="@GameSite.Models.UserStatus.DoNotDisturb" @(Model.User.Status == GameSite.Models.UserStatus.DoNotDisturb ? "selected" : null)>Do Not Disturb</option>
-                <option value="@GameSite.Models.UserStatus.Offline" @(Model.User.Status == GameSite.Models.UserStatus.Offline ? "selected" : null)>Offline</option>
-            </select>
-            <button type="submit" class="btn btn-sm btn-secondary ms-1">Set</button>
-        </form>
         <a asp-action="Edit" class="btn btn-primary">Edit profile</a>
     }
 }

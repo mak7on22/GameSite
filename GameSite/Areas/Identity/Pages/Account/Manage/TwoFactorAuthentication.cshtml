@@ -1,0 +1,17 @@
+@page
+@model GameSite.Areas.Identity.Pages.Account.Manage.TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "Two-factor authentication (2FA)";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+@if (Model.Is2faEnabled)
+{
+    <p>Two-factor authentication is enabled.</p>
+}
+else
+{
+    <p>Two-factor authentication is not enabled.</p>
+    <a asp-page="./EnableAuthenticator" class="btn btn-primary">Setup Authenticator app</a>
+}

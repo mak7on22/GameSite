@@ -2,7 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using GameSite.Models;
+using GameSite.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.IO;
+using System.Linq;
 
 namespace GameSite.Controllers
 {
@@ -11,18 +16,68 @@ namespace GameSite.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;
 
         public UserController(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            return View(user);
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var friends = await _context.Friends
+                .Include(f => f.FriendUser)
+                .Where(f => f.UserId == user.Id)
+                .ToListAsync();
+
+            var model = new UserProfileViewModel
+            {
+                User = user,
+                Friends = friends,
+                IsSelf = true
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var current = await _userManager.GetUserAsync(User);
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var friends = await _context.Friends
+                .Include(f => f.FriendUser)
+                .Where(f => f.UserId == user.Id)
+                .ToListAsync();
+
+            var model = new UserProfileViewModel
+            {
+                User = user,
+                Friends = friends,
+                IsSelf = current != null && current.Id == user.Id
+            };
+
+            return View("Index", model);
         }
 
         [HttpGet]
@@ -33,7 +88,7 @@ namespace GameSite.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(ApplicationUser model)
+        public async Task<IActionResult> Edit(ApplicationUser model, IFormFile? avatarFile)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -46,7 +101,22 @@ namespace GameSite.Controllers
                 return View(model);
             }
 
-            user.AvatarPath = model.AvatarPath;
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                var uploads = Path.Combine("wwwroot", "avatars");
+                Directory.CreateDirectory(uploads);
+                var fileName = user.Id + Path.GetExtension(avatarFile.FileName);
+                var path = Path.Combine(uploads, fileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await avatarFile.CopyToAsync(stream);
+                }
+                user.AvatarPath = "/avatars/" + fileName;
+            }
+            else
+            {
+                user.AvatarPath = model.AvatarPath;
+            }
 
             if (!string.Equals(user.UserName, model.UserName, StringComparison.Ordinal))
             {

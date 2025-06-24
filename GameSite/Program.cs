@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using GameSite.Models;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using GameSite.Services;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -11,7 +12,7 @@ namespace GameSite
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +54,14 @@ namespace GameSite
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                await SeedAdminAsync(roleManager, userManager);
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -82,6 +91,22 @@ namespace GameSite
             app.MapRazorPages();
 
             app.Run();
+        }
+
+        private static async Task SeedAdminAsync(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+        {
+            const string email = "mur-mur-0998@mail.ru";
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+            var user = await userManager.FindByEmailAsync(email);
+            if (user != null && !await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                await userManager.AddToRoleAsync(user, "Admin");
+                user.Role = Role.Admin;
+                await userManager.UpdateAsync(user);
+            }
         }
     }
 }

@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const statusSelect = document.getElementById('status-select');
+    const statusIndicator = document.getElementById('status-indicator');
     if (statusSelect) {
         statusSelect.addEventListener('change', async () => {
             const val = statusSelect.value;
@@ -131,6 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
                 body: `status=${encodeURIComponent(val)}`
             });
+            if (statusIndicator) {
+                const res = await fetch('/User/StatusIndicator');
+                if (res.ok) {
+                    statusIndicator.innerHTML = await res.text();
+                }
+            }
         });
     }
 

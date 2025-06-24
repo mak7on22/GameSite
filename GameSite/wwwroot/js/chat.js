@@ -6,11 +6,13 @@ connection.on('ReceiveMessage', msg => {
     const messagesDiv = document.getElementById('messages');
     if (!messagesDiv) return;
     const div = document.createElement('div');
-    div.className = 'mb-1';
+    div.className = 'mb-1 ' + (msg.isOwn ? 'text-end' : 'text-start');
     const strong = document.createElement('strong');
-    strong.textContent = msg.isOwn ? 'You' : msg.senderName;
+    const time = msg.created ? new Date(msg.created).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+    strong.textContent = (msg.isOwn ? 'You' : msg.senderName) + ' ' + time;
     div.appendChild(strong);
-    div.append(document.createTextNode(': ' + msg.content));
+    div.append(document.createElement('br'));
+    div.append(document.createTextNode(msg.content));
     if (msg.mediaPath) {
         const img = document.createElement('img');
         img.src = msg.mediaPath;
@@ -27,6 +29,15 @@ function initChat() {
     const messageInput = document.getElementById('chat-message');
     if (messageInput && $(messageInput).emojioneArea) {
         $(messageInput).emojioneArea({ pickerPosition: 'top' });
+    }
+    if (messageInput) {
+        messageInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const form = document.getElementById('chat-form');
+                if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+        });
     }
 }
 

@@ -37,7 +37,6 @@ namespace GameSite
             builder.Services.AddTransient<IPasswordValidator<ApplicationUser>, CustomPasswordValidator>();
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddTransient<IEmailSender, EmailSender>();
-            builder.Services.AddTransient<IEmailService, EmailSender>();
             builder.Services.AddTransient<IGoogleAuthService, GoogleAuthService>();
             var authenticationBuilder = builder.Services.AddAuthentication();
             var googleAuth = builder.Configuration.GetSection("Authentication:Google");

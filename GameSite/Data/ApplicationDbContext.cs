@@ -20,6 +20,10 @@ namespace GameSite.Data
             base.OnModelCreating(builder);
 
             builder.Entity<ApplicationUser>()
+                .HasIndex(u => u.UniqueId)
+                .IsUnique();
+
+            builder.Entity<ApplicationUser>()
                 .HasMany(u => u.Friends)
                 .WithOne(f => f.User)
                 .HasForeignKey(f => f.UserId)

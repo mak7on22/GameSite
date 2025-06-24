@@ -55,7 +55,14 @@ namespace GameSite.Areas.Identity.Pages.Account
             returnUrl ??= Url.Action("Index", "User");
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, RegistrationDate = DateTime.UtcNow };
+                string uid;
+                do
+                {
+                    uid = Guid.NewGuid().ToString("N").Substring(0, 8);
+                }
+                while (_userManager.Users.Any(u => u.UniqueId == uid));
+
+                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, RegistrationDate = DateTime.UtcNow, UniqueId = uid };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

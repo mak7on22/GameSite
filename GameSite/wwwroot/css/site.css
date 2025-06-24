@@ -20,3 +20,12 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+#search-results {
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+  z-index: 1000;
+}

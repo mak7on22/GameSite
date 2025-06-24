@@ -17,6 +17,8 @@ namespace GameSite.Models
         public int Rank { get; set; }
         public int XP { get; set; }
 
+        public bool IsEmailPublic { get; set; } = false;
+
         [InverseProperty(nameof(Friend.User))]
         public ICollection<Friend>? Friends { get; set; }
         public ICollection<Like>? Likes { get; set; }

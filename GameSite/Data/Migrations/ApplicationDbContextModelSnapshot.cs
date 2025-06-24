@@ -99,6 +99,9 @@ namespace GameSite.Data.Migrations
                     b.Property<int>("XP")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsEmailPublic")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")

@@ -23,21 +23,33 @@
         <span class="status-dot @color"></span>
     </p>
     <p>Your ID: @Model.User.UniqueId</p>
-    <p>Email: @Model.User.Email</p>
+    <p>
+        Email:
+        @if (Model.IsSelf || Model.User.IsEmailPublic)
+        {
+            @Model.User.Email
+        }
+        else
+        {
+            <span>Hidden</span>
+        }
+    </p>
     <p>Balance: @Model.User.Balance.ToString("0") GameCoins</p>
     <p>XP: @Model.User.XP</p>
     <p>Rank: @Model.User.Rank</p>
     @if (Model.IsSelf)
     {
-        <form asp-action="UpdateStatus" method="post" class="mb-2">
-            <select name="status" class="form-select d-inline w-auto">
-                <option value="@GameSite.Models.UserStatus.Online" selected="@(Model.User.Status == GameSite.Models.UserStatus.Online)">Online</option>
-                <option value="@GameSite.Models.UserStatus.DoNotDisturb" selected="@(Model.User.Status == GameSite.Models.UserStatus.DoNotDisturb)">Do Not Disturb</option>
-                <option value="@GameSite.Models.UserStatus.Offline" selected="@(Model.User.Status == GameSite.Models.UserStatus.Offline)">Offline</option>
-            </select>
-            <button type="submit" class="btn btn-sm btn-secondary ms-1">Set</button>
+        <select id="status-select" class="form-select d-inline w-auto">
+            <option value="@GameSite.Models.UserStatus.Online" selected="@(Model.User.Status == GameSite.Models.UserStatus.Online)">Online</option>
+            <option value="@GameSite.Models.UserStatus.DoNotDisturb" selected="@(Model.User.Status == GameSite.Models.UserStatus.DoNotDisturb)">Do Not Disturb</option>
+            <option value="@GameSite.Models.UserStatus.Offline" selected="@(Model.User.Status == GameSite.Models.UserStatus.Offline)">Offline</option>
+        </select>
+        <form asp-action="ToggleEmailVisibility" method="post" class="d-inline ms-2">
+            <input type="hidden" name="isPublic" value="@(Model.User.IsEmailPublic ? "false" : "true")" />
+            <button type="submit" class="btn btn-sm btn-secondary">@(Model.User.IsEmailPublic ? "Hide email" : "Show email")</button>
         </form>
-        <a asp-action="Edit" class="btn btn-primary">Edit profile</a>
+        <button type="button" class="btn btn-sm btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#friendModal">Find friends</button>
+        <a asp-action="Edit" class="btn btn-primary ms-2">Edit profile</a>
     }
 }
 
@@ -72,3 +84,18 @@
     <h4 class="mt-4">Posts</h4>
     @await Html.PartialAsync("_PostList", Model.Posts)
 }
+
+<div class="modal fade" id="friendModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Find Friend</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="search" id="friend-search" class="form-control" placeholder="Enter user id" autocomplete="off" />
+                <div id="friend-search-results" class="list-group mt-2"></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -81,3 +81,26 @@ document.querySelectorAll('[data-theme-value]').forEach(btn => {
         applyTheme(getPreferredTheme());
     });
 });
+
+// Like buttons ajax
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.like-form').forEach(form => {
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const btn = form.querySelector('.like-btn');
+            const id = btn.dataset.postId;
+            const res = await fetch('/Post/Like', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `postId=${encodeURIComponent(id)}`
+            });
+            if (res.ok) {
+                const data = await res.json();
+                btn.textContent = (data.liked ? 'Unlike' : 'Like') + ` (${data.likes})`;
+            }
+        });
+    });
+});

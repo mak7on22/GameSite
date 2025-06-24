@@ -37,3 +37,41 @@ if (searchInput && resultsContainer) {
         });
     });
 }
+
+// Theme switcher
+function getStoredTheme() {
+    return localStorage.getItem('theme');
+}
+
+function getPreferredTheme() {
+    const stored = getStoredTheme();
+    if (stored) {
+        return stored;
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+}
+
+applyTheme(getPreferredTheme());
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (!getStoredTheme()) {
+        applyTheme(getPreferredTheme());
+    }
+});
+
+document.querySelectorAll('[data-theme-value]').forEach(btn => {
+    btn.addEventListener('click', e => {
+        e.preventDefault();
+        const theme = btn.getAttribute('data-theme-value');
+        if (theme === 'system') {
+            localStorage.removeItem('theme');
+        } else {
+            localStorage.setItem('theme', theme);
+        }
+        applyTheme(getPreferredTheme());
+    });
+});

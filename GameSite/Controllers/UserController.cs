@@ -215,6 +215,26 @@ namespace GameSite.Controllers
                 await _userManager.UpdateAsync(user);
                 await _signInManager.RefreshSignInAsync(user);
             }
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Ok();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ToggleEmailVisibility(bool isPublic)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                user.IsEmailPublic = isPublic;
+                await _userManager.UpdateAsync(user);
+                await _signInManager.RefreshSignInAsync(user);
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }

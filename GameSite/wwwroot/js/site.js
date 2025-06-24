@@ -113,4 +113,47 @@ document.addEventListener('DOMContentLoaded', () => {
             link.remove();
         });
     });
+
+    const statusSelect = document.getElementById('status-select');
+    if (statusSelect) {
+        statusSelect.addEventListener('change', async () => {
+            const val = statusSelect.value;
+            await fetch('/User/UpdateStatus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+                body: `status=${encodeURIComponent(val)}`
+            });
+        });
+    }
+
+    const friendSearch = document.getElementById('friend-search');
+    const friendResults = document.getElementById('friend-search-results');
+    if (friendSearch && friendResults) {
+        friendSearch.addEventListener('input', async () => {
+            const q = friendSearch.value.trim();
+            if (!q) { friendResults.innerHTML = ''; return; }
+            const res = await fetch(`/Search/Users?query=${encodeURIComponent(q)}`);
+            if (!res.ok) return;
+            const users = await res.json();
+            friendResults.innerHTML = '';
+            users.forEach(u => {
+                const div = document.createElement('div');
+                div.className = 'list-group-item d-flex justify-content-between align-items-center';
+                div.textContent = u.userName;
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-sm btn-primary ms-2';
+                btn.textContent = 'Add';
+                btn.addEventListener('click', async () => {
+                    await fetch('/Friends/Add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `friendId=${encodeURIComponent(u.id)}`
+                    });
+                    window.location.reload();
+                });
+                div.appendChild(btn);
+                friendResults.appendChild(div);
+            });
+        });
+    }
 });

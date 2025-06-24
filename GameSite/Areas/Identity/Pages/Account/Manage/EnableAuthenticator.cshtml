@@ -1,0 +1,39 @@
+@page
+@model GameSite.Areas.Identity.Pages.Account.Manage.EnableAuthenticatorModel
+@{
+    ViewData["Title"] = "Authenticator app";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<p>Scan the QR code with your authenticator app, or enter the key manually.</p>
+
+<div class="mb-3">
+    <label class="form-label">Key</label>
+    <input type="text" class="form-control" value="@Model.SharedKey" readonly />
+</div>
+
+<div id="qr-code" class="mb-3"></div>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Input.Code" class="form-label"></label>
+        <input asp-for="Input.Code" class="form-control" autocomplete="off" />
+        <span asp-validation-for="Input.Code" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Verify</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/davidshimjs-qrcodejs-04f46c6/qrcode.min.js"></script>
+    <script>
+        (function () {
+            var qrcode = new QRCode(document.getElementById('qr-code'), {
+                width: 200,
+                height: 200
+            });
+            qrcode.makeCode('@Model.AuthenticatorUri');
+        })();
+    </script>
+}

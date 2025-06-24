@@ -9,6 +9,8 @@ namespace GameSite.Models
 
         [Required]
         public string UserId { get; set; } = null!;
+
+        [ForeignKey(nameof(UserId))]
         public ApplicationUser? User { get; set; }
 
         [Required]

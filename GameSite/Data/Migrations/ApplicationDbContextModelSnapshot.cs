@@ -88,13 +88,13 @@ namespace GameSite.Data.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
                     b.Property<string>("UniqueId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<int>("XP")
                         .HasColumnType("integer");
@@ -136,7 +136,7 @@ namespace GameSite.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Friends", (string)null);
+                    b.ToTable("Friends");
                 });
 
             modelBuilder.Entity("GameSite.Models.Like", b =>
@@ -158,7 +158,7 @@ namespace GameSite.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Likes", (string)null);
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("GameSite.Models.Post", b =>
@@ -183,7 +183,7 @@ namespace GameSite.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -327,7 +327,7 @@ namespace GameSite.Data.Migrations
                     b.HasOne("GameSite.Models.ApplicationUser", "FriendUser")
                         .WithMany()
                         .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GameSite.Models.ApplicationUser", "User")

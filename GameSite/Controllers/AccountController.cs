@@ -35,13 +35,6 @@ namespace GameSite.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user != null)
-            {
-                user.Status = UserStatus.Offline;
-                await _userManager.UpdateAsync(user);
-            }
-
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }

@@ -72,8 +72,6 @@ namespace GameSite
 
             app.UseAuthentication();
 
-            app.UseMiddleware<GameSite.Services.UserStatusMiddleware>();
-
             app.UseAuthorization();
 
             app.MapControllerRoute(

@@ -33,7 +33,7 @@
                 <p><a href="@post.MediaUrl" target="_blank">@post.MediaUrl</a></p>
             }
         }
-        {
+        @{
             var currentId = UserManager.GetUserId(User);
             bool liked = post.Likes?.Any(l => l.UserId == currentId) == true;
         }

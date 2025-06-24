@@ -1,0 +1,10 @@
+@model GameSite.Models.UserStatus
+@{
+    var color = Model switch
+    {
+        GameSite.Models.UserStatus.Online => "status-online",
+        GameSite.Models.UserStatus.DoNotDisturb => "status-dnd",
+        _ => "status-offline"
+    };
+}
+<span class="status-dot @color"></span>

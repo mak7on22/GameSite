@@ -7,7 +7,7 @@ using GameSite.Models;
 
 namespace GameSite.Services
 {
-    public class EmailSender : IEmailSender
+    public class EmailSender : IEmailSender, IEmailService
     {
         private readonly EmailSettings _settings;
 

@@ -23,6 +23,7 @@
         <span class="status-dot @color"></span>
     </p>
     <p>Your ID: @Model.User.UniqueId</p>
+    <p>Role: @Model.User.Role</p>
     <p>
         Email:
         @if (Model.IsSelf || Model.User.IsEmailPublic)

@@ -12,15 +12,9 @@
     }
     <p>
         UserName: @Model.User.UserName
-        @{
-            var color = Model.User.Status switch
-            {
-                GameSite.Models.UserStatus.Online => "status-online",
-                GameSite.Models.UserStatus.DoNotDisturb => "status-dnd",
-                _ => "status-offline"
-            };
-        }
-        <span class="status-dot @color"></span>
+        <span id="status-indicator">
+            @await Html.PartialAsync("_StatusIndicator", Model.User.Status)
+        </span>
     </p>
     <p>Your ID: @Model.User.UniqueId</p>
     <p>Role: @Model.User.Role</p>
@@ -43,7 +37,6 @@
         <select id="status-select" class="form-select d-inline w-auto">
             <option value="@GameSite.Models.UserStatus.Online" selected="@(Model.User.Status == GameSite.Models.UserStatus.Online)">Online</option>
             <option value="@GameSite.Models.UserStatus.DoNotDisturb" selected="@(Model.User.Status == GameSite.Models.UserStatus.DoNotDisturb)">Do Not Disturb</option>
-            <option value="@GameSite.Models.UserStatus.Offline" selected="@(Model.User.Status == GameSite.Models.UserStatus.Offline)">Offline</option>
         </select>
         <form asp-action="ToggleEmailVisibility" method="post" class="d-inline ms-2">
             <input type="hidden" name="isPublic" value="@(Model.User.IsEmailPublic ? "false" : "true")" />

@@ -237,5 +237,16 @@ namespace GameSite.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> StatusIndicator()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return PartialView("_StatusIndicator", user.Status);
+        }
     }
 }

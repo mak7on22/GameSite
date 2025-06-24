@@ -108,9 +108,17 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', e => {
             e.preventDefault();
             const p = link.parentElement;
-            p.querySelector('.more-text').classList.remove('d-none');
-            p.querySelector('.ellipsis').classList.add('d-none');
-            link.remove();
+            const more = p.querySelector('.more-text');
+            const ellipsis = p.querySelector('.ellipsis');
+            if (more.classList.contains('d-none')) {
+                more.classList.remove('d-none');
+                ellipsis.classList.add('d-none');
+                link.textContent = '(скрыть..)';
+            } else {
+                more.classList.add('d-none');
+                ellipsis.classList.remove('d-none');
+                link.textContent = '(ещё..)';
+            }
         });
     });
 

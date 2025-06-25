@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\posts\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
 </Project>

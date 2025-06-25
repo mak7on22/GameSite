@@ -169,6 +169,20 @@ body {
   align-items: center;
   gap: 1rem;
 }
+.durak-page .player-hand,
+.durak-page .ai-hand {
+  display: flex;
+  gap: 10px;
+}
+.durak-page .deck-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.round-controls {
+  display: flex;
+  gap: 0.5rem;
+}
 .durak-page .card {
   width: 60px;
   border-radius: 8px;

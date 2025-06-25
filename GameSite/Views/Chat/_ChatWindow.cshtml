@@ -6,15 +6,8 @@
     <div id="messages" class="border mb-2 p-2" style="height:250px; overflow-y:auto;">
         @foreach (var m in Model.Messages)
         {
-            var own = m.SenderId == User.FindFirstValue(ClaimTypes.NameIdentifier);
-            <div class="mb-1 @(own ? "text-end" : "text-start")">
-                <strong>@(own ? "You" : Model.Friend.UserName) @m.Created.ToLocalTime().ToString("HH:mm")</strong><br />
-                @m.Content
-                @if (!string.IsNullOrEmpty(m.MediaPath))
-                {
-                    <div><img src="@m.MediaPath" class="img-fluid mt-1" /></div>
-                }
-            </div>
+            ViewData["SenderName"] = Model.Friend.UserName;
+            @await Html.PartialAsync("_Message", m)
         }
     </div>
     <form id="chat-form" asp-controller="Chat" asp-action="Send" asp-route-friendId="@Model.Friend.Id" data-friend-id="@Model.Friend.Id" enctype="multipart/form-data">

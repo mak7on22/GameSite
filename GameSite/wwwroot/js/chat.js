@@ -53,7 +53,7 @@ function initChat() {
                 if (area.editor) area.editor.on('input', updateSendState);
                 updateSendState();
             });
-            area.on('change', updateSendState);
+            area.on('change emojibtn.click', updateSendState);
         }
     }
     const keyTarget = area && area.editor ? area.editor : messageInput;

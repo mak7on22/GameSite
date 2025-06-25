@@ -25,6 +25,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\posts\" />
     <Folder Include="wwwroot\uploads\" />
+    <Folder Include="wwwroot\textures\" />
   </ItemGroup>
 
 </Project>

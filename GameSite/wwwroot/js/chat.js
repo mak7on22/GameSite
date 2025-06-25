@@ -39,22 +39,24 @@ function initChat() {
             }
         });
     }
+    const form = document.getElementById('chat-form');
+    if (form) {
+        form.addEventListener('submit', sendChat);
+    }
+}
+
+async function sendChat(e) {
+    e.preventDefault();
+    const form = e.target;
+    const friendId = form.dataset.friendId;
+    const data = new FormData(form);
+    const res = await fetch(`/Chat/Send?friendId=${encodeURIComponent(friendId)}`, {
+        method: 'POST',
+        body: data
+    });
+    if (res.ok) {
+        form.reset();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initChat);
-
-document.addEventListener('submit', async e => {
-    if (e.target.id === 'chat-form') {
-        e.preventDefault();
-        const form = e.target;
-        const friendId = form.dataset.friendId;
-        const data = new FormData(form);
-        const res = await fetch(`/Chat/Send?friendId=${encodeURIComponent(friendId)}`, {
-            method: 'POST',
-            body: data
-        });
-        if (res.ok) {
-            form.reset();
-        }
-    }
-});

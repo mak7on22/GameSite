@@ -1,0 +1,14 @@
+@model GameSite.Models.ChatMessage
+@using System.Security.Claims
+@{
+    var own = Model.SenderId == User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var senderName = own ? "You" : ViewData["SenderName"]?.ToString() ?? "Friend";
+}
+<div class="mb-1 @(own ? "text-end" : "text-start")">
+    <strong>@senderName @Model.Created.ToLocalTime().ToString("HH:mm")</strong><br />
+    @Model.Content
+    @if (!string.IsNullOrEmpty(Model.MediaPath))
+    {
+        <div><img src="@Model.MediaPath" class="img-fluid mt-1" /></div>
+    }
+</div>

@@ -1,0 +1,22 @@
+{
+  "name": "gamesite",
+  "version": "1.0.0",
+  "description": "This project is an ASP.NET Core web application. For Google authentication to work you need to provide the OAuth `ClientId` and `ClientSecret`.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.3",
+    "ts-jest": "^29.4.0",
+    "typescript": "^5.8.3"
+  }
+}

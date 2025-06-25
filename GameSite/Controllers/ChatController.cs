@@ -86,11 +86,16 @@ namespace GameSite.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Send(string friendId, string message, IFormFile? image)
+        public async Task<IActionResult> Send(string friendId, string message, IFormFile? file)
         {
             if (string.IsNullOrWhiteSpace(friendId)) return BadRequest();
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
+
+            if (string.IsNullOrWhiteSpace(message) && (file == null || file.Length == 0))
+            {
+                return BadRequest();
+            }
 
             var msg = new ChatMessage
             {
@@ -100,15 +105,24 @@ namespace GameSite.Controllers
                 Created = DateTime.UtcNow
             };
 
-            if (image != null && image.Length > 0)
+            if (file != null && file.Length > 0)
             {
+                var allowedMedia = new[] { ".jpg", ".png", ".mp4", ".mov" };
+                var allowedDocs = new[] { ".pdf", ".docx", ".txt" };
+                var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+                var maxSize = 1610612736; // 1.5 GB
+                if ((!allowedMedia.Contains(ext) && !allowedDocs.Contains(ext)) || file.Length > maxSize)
+                {
+                    return BadRequest();
+                }
+
                 var uploads = Path.Combine("wwwroot", "uploads");
                 Directory.CreateDirectory(uploads);
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                var fileName = Guid.NewGuid().ToString() + ext;
                 var filePath = Path.Combine(uploads, fileName);
                 using (var stream = System.IO.File.Create(filePath))
                 {
-                    await image.CopyToAsync(stream);
+                    await file.CopyToAsync(stream);
                 }
                 msg.MediaPath = "/uploads/" + fileName;
             }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using GameSite.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using GameSite.Hubs;
+using React.AspNet;
 
 namespace GameSite
 {

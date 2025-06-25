@@ -45,8 +45,11 @@ export function dealInitial(): GameState {
     });
   });
   const defender = attacker === 'human' ? 'ai' : 'human';
-  // keep the trump card as the last card in the deck for later draw
+
   const rest = deck.slice(index);
+
+  const rest = deck.slice(index, deck.length-1);
+
   return {
     players,
     deck: rest,
@@ -57,6 +60,7 @@ export function dealInitial(): GameState {
     phase: 'attack'
   };
 }
+
 
 function ranksOnTable(state: GameState): number[] {
   const ranks: number[] = [];

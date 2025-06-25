@@ -6,6 +6,7 @@ exports.dealInitial = dealInitial;
 exports.canBeat = canBeat;
 exports.attack = attack;
 exports.defend = defend;
+
 const RANKS = [6, 7, 8, 9, 10, 11, 12, 13, 14];
 const SUITS = ['clubs', 'diamonds', 'hearts', 'spades'];
 function buildDeck(size = 36) {
@@ -50,8 +51,10 @@ function dealInitial() {
         });
     });
     const defender = attacker === 'human' ? 'ai' : 'human';
-    // keep the trump card as the last card in the deck for later draw
     const rest = deck.slice(index);
+
+    const rest = deck.slice(index, deck.length - 1);
+
     return {
         players,
         deck: rest,
@@ -62,6 +65,7 @@ function dealInitial() {
         phase: 'attack'
     };
 }
+
 function ranksOnTable(state) {
     const ranks = [];
     state.table.forEach(p => {
@@ -117,3 +121,4 @@ function defend(state, attackIndex, cardId) {
         state.phase = 'resolution';
     return true;
 }
+

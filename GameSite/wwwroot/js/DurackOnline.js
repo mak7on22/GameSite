@@ -13,8 +13,8 @@ import { Shuffle, Play, Repeat } from "lucide-react";
  * - AI logic + online multiplayer are TODO hooks (see comments)
  *
  * 📁 Assets:
- *   Put PNGs from Cards.rar inside `/public/cards` **unchanged**.
- *   Example: /public/cards/6_of_hearts.png, /public/cards/back.png
+ *   Put PNGs from Cards.rar inside `/textures/cards` **unchanged**.
+ *   Example: /textures/cards/6_of_hearts.png, /textures/cards/back.png
  *
  * 🛠 Tech stack:
  *   React 18 · TailwindCSS · shadcn/ui · framer‑motion · lucide‑react
@@ -62,7 +62,7 @@ function buildDeck(size = 52) {
                 id: `${rank}_of_${suit}`,
                 rank,
                 suit,
-                img: `/cards/${rank}_of_${suit}.png`,
+                img: `/textures/cards/${rank}_of_${suit}.png`,
             });
         })
     );
@@ -154,7 +154,7 @@ export default function DurakApp() {
                                 {aiHand.map((card, index) => (
                                     <motion.img
                                         key={card.id}
-                                        src="/cards/back.png"
+                                        src="/textures/cards/back.png"
                                         alt="Card back"
                                         className="w-16 md:w-20 rounded-lg shadow"
                                         initial={{ y: -100, opacity: 0 }}

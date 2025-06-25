@@ -30,6 +30,11 @@ namespace GameSite.Controllers
             return View(user);
         }
 
+        public IActionResult DurakOnline()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddXp(int amount)
         {

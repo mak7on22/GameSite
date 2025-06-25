@@ -182,3 +182,31 @@ body {
 .durak-page .player-hand .card:hover {
   transform: translateY(-4px);
 }
+
+.durak-page .table {
+  display: flex;
+  gap: 0.5rem;
+  min-height: 90px;
+}
+
+.table-card {
+  position: relative;
+}
+.table-card .defense {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+}
+
+@keyframes deal-player {
+  from {transform: translateY(50px); opacity: 0;}
+  to {transform: translateY(0); opacity: 1;}
+}
+
+@keyframes deal-ai {
+  from {transform: translateY(-50px); opacity: 0;}
+  to {transform: translateY(0); opacity: 1;}
+}
+
+.deal-player { animation: deal-player 0.3s ease-out; }
+.deal-ai { animation: deal-ai 0.3s ease-out; }

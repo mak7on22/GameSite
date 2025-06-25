@@ -172,12 +172,20 @@ body {
 .durak-page .player-hand,
 .durak-page .ai-hand {
   display: flex;
-  gap: 10px;
+  flex-direction: row;
+  gap: 12px;
 }
 .durak-page .deck-area {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+.deck-counter {
+  font-weight: bold;
+  color: #fff;
+}
+.card.trump {
+  border: 2px solid gold;
 }
 .round-controls {
   display: flex;

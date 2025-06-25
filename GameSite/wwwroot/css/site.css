@@ -111,3 +111,40 @@ body {
   height: 100%;
   display: block;
 }
+
+.card--durak {
+  width: 250px;
+  height: 320px;
+  background-image: url('../textures/cards/back.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.card--durak::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+  border-radius: 16px;
+}
+
+.card--durak span {
+  position: relative;
+  z-index: 1;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.card--durak:hover {
+  transform: translateY(-4px);
+}

@@ -23,7 +23,7 @@ connection.on('ReceiveMessage', msg => {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
-connection.start();
+connection.start().catch(err => console.error(err.toString()));
 
 function initChat() {
     const messageInput = document.getElementById('chat-message');

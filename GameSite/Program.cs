@@ -50,6 +50,7 @@ namespace GameSite
                     options.ClientSecret = clientSecret;
                 });
             }
+            builder.Services.AddReact();
             builder.Services.AddControllersWithViews();
             builder.Services.AddSignalR();
 
@@ -77,6 +78,7 @@ namespace GameSite
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseReact(config => { });
 
             app.UseRouting();
 

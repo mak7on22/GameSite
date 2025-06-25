@@ -3,6 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildDeck = buildDeck;
 exports.shuffle = shuffle;
 exports.dealInitial = dealInitial;
+exports.canBeat = canBeat;
+exports.attack = attack;
+exports.defend = defend;
+
 const RANKS = [6, 7, 8, 9, 10, 11, 12, 13, 14];
 const SUITS = ['clubs', 'diamonds', 'hearts', 'spades'];
 function buildDeck(size = 36) {
@@ -47,7 +51,10 @@ function dealInitial() {
         });
     });
     const defender = attacker === 'human' ? 'ai' : 'human';
+    const rest = deck.slice(index);
+
     const rest = deck.slice(index, deck.length - 1);
+
     return {
         players,
         deck: rest,
@@ -58,3 +65,60 @@ function dealInitial() {
         phase: 'attack'
     };
 }
+
+function ranksOnTable(state) {
+    const ranks = [];
+    state.table.forEach(p => {
+        ranks.push(p.attack.rank);
+        if (p.defense)
+            ranks.push(p.defense.rank);
+    });
+    return ranks;
+}
+function canBeat(att, def, trump) {
+    if (def.suit === att.suit && def.rank > att.rank)
+        return true;
+    if (def.suit === trump && att.suit !== trump)
+        return true;
+    return false;
+}
+function attack(state, cardId) {
+    if (state.phase !== 'attack')
+        return false;
+    const player = state.players[state.attacker];
+    const idx = player.hand.findIndex(c => c.id === cardId);
+    if (idx === -1)
+        return false;
+    const card = player.hand[idx];
+    if (state.table.length > 0) {
+        if (state.table.length >= 6)
+            return false;
+        const ranks = ranksOnTable(state);
+        if (!ranks.includes(card.rank))
+            return false;
+    }
+    player.hand.splice(idx, 1);
+    state.table.push({ attack: card });
+    state.phase = 'defense';
+    return true;
+}
+function defend(state, attackIndex, cardId) {
+    if (state.phase !== 'defense')
+        return false;
+    const pair = state.table[attackIndex];
+    if (!pair || pair.defense)
+        return false;
+    const defender = state.players[state.defender];
+    const idx = defender.hand.findIndex(c => c.id === cardId);
+    if (idx === -1)
+        return false;
+    const card = defender.hand[idx];
+    if (!canBeat(pair.attack, card, state.trump))
+        return false;
+    defender.hand.splice(idx, 1);
+    pair.defense = card;
+    if (state.table.every(p => p.defense))
+        state.phase = 'resolution';
+    return true;
+}
+

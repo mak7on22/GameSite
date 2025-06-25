@@ -45,7 +45,11 @@ export function dealInitial(): GameState {
     });
   });
   const defender = attacker === 'human' ? 'ai' : 'human';
+
+  const rest = deck.slice(index);
+
   const rest = deck.slice(index, deck.length-1);
+
   return {
     players,
     deck: rest,
@@ -55,4 +59,52 @@ export function dealInitial(): GameState {
     table: [],
     phase: 'attack'
   };
+}
+
+
+function ranksOnTable(state: GameState): number[] {
+  const ranks: number[] = [];
+  state.table.forEach(p => {
+    ranks.push(p.attack.rank);
+    if (p.defense) ranks.push(p.defense.rank);
+  });
+  return ranks;
+}
+
+export function canBeat(att: Card, def: Card, trump: Suit): boolean {
+  if (def.suit === att.suit && def.rank > att.rank) return true;
+  if (def.suit === trump && att.suit !== trump) return true;
+  return false;
+}
+
+export function attack(state: GameState, cardId: string): boolean {
+  if (state.phase !== 'attack') return false;
+  const player = state.players[state.attacker];
+  const idx = player.hand.findIndex(c => c.id === cardId);
+  if (idx === -1) return false;
+  const card = player.hand[idx];
+  if (state.table.length > 0) {
+    if (state.table.length >= 6) return false;
+    const ranks = ranksOnTable(state);
+    if (!ranks.includes(card.rank)) return false;
+  }
+  player.hand.splice(idx, 1);
+  state.table.push({ attack: card });
+  state.phase = 'defense';
+  return true;
+}
+
+export function defend(state: GameState, attackIndex: number, cardId: string): boolean {
+  if (state.phase !== 'defense') return false;
+  const pair = state.table[attackIndex];
+  if (!pair || pair.defense) return false;
+  const defender = state.players[state.defender];
+  const idx = defender.hand.findIndex(c => c.id === cardId);
+  if (idx === -1) return false;
+  const card = defender.hand[idx];
+  if (!canBeat(pair.attack, card, state.trump)) return false;
+  defender.hand.splice(idx, 1);
+  pair.defense = card;
+  if (state.table.every(p => p.defense)) state.phase = 'resolution';
+  return true;
 }

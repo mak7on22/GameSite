@@ -46,9 +46,7 @@ export function dealInitial(): GameState {
   });
   const defender = attacker === 'human' ? 'ai' : 'human';
 
-  const rest = deck.slice(index);
-
-  const rest = deck.slice(index, deck.length-1);
+  const rest = deck.slice(index, deck.length - 1);
 
   return {
     players,
@@ -105,6 +103,10 @@ export function defend(state: GameState, attackIndex: number, cardId: string): b
   if (!canBeat(pair.attack, card, state.trump)) return false;
   defender.hand.splice(idx, 1);
   pair.defense = card;
-  if (state.table.every(p => p.defense)) state.phase = 'resolution';
+  if (state.table.every(p => p.defense)) {
+    state.phase = 'resolution';
+  } else {
+    state.phase = 'attack';
+  }
   return true;
 }

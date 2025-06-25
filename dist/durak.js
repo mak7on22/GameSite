@@ -47,7 +47,8 @@ function dealInitial() {
         });
     });
     const defender = attacker === 'human' ? 'ai' : 'human';
-    const rest = deck.slice(index, deck.length - 1);
+    // keep the trump card as the last card in the deck for later draw
+    const rest = deck.slice(index);
     return {
         players,
         deck: rest,

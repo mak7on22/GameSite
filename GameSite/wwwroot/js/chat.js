@@ -44,11 +44,21 @@ connection.start().catch(err => console.error(err.toString()));
 
 function initChat() {
     const messageInput = document.getElementById('chat-message');
+    let area = null;
     if (messageInput && $(messageInput).emojioneArea) {
         $(messageInput).emojioneArea({ pickerPosition: 'top' });
+        area = $(messageInput).data('emojioneArea');
+        if (area) {
+            area.on('ready', () => {
+                if (area.editor) area.editor.on('input', updateSendState);
+                updateSendState();
+            });
+            area.on('change', updateSendState);
+        }
     }
-    if (messageInput) {
-        messageInput.addEventListener('keydown', e => {
+    const keyTarget = area && area.editor ? area.editor : messageInput;
+    if (keyTarget) {
+        keyTarget.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 const form = document.getElementById('chat-form');
@@ -61,13 +71,8 @@ function initChat() {
     if (form) {
         form.addEventListener('submit', sendChat);
     }
-    if (messageInput) {
-        const area = $(messageInput).data('emojioneArea');
-        if (area && area.editor) {
-            area.editor.on('input', updateSendState);
-        } else {
-            messageInput.addEventListener('input', updateSendState);
-        }
+    if (!area && messageInput) {
+        messageInput.addEventListener('input', updateSendState);
     }
     if (fileInput) {
         fileInput.addEventListener('change', updateSendState);

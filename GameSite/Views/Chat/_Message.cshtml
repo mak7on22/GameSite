@@ -9,6 +9,18 @@
     @Model.Content
     @if (!string.IsNullOrEmpty(Model.MediaPath))
     {
-        <div><img src="@Model.MediaPath" class="img-fluid mt-1" /></div>
+        var ext = System.IO.Path.GetExtension(Model.MediaPath).ToLowerInvariant();
+        if (ext == ".jpg" || ext == ".png")
+        {
+            <div><img src="@Model.MediaPath" class="img-fluid mt-1" /></div>
+        }
+        else if (ext == ".mp4" || ext == ".mov")
+        {
+            <div><video src="@Model.MediaPath" controls class="img-fluid mt-1"></video></div>
+        }
+        else
+        {
+            <div><a href="@Model.MediaPath" target="_blank">Download file</a></div>
+        }
     }
 </div>

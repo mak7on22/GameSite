@@ -9,6 +9,8 @@ using GameSite.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using GameSite.Hubs;
 using React.AspNet;
+using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
+using JavaScriptEngineSwitcher.ChakraCore;
 
 namespace GameSite
 {
@@ -52,6 +54,9 @@ namespace GameSite
                 });
             }
             builder.Services.AddReact();
+            builder.Services.AddJsEngineSwitcher(options =>
+                    options.DefaultEngineName = ChakraCoreJsEngine.EngineName)
+                .AddChakraCore();
             builder.Services.AddControllersWithViews();
             builder.Services.AddSignalR();
 

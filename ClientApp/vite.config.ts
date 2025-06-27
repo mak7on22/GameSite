@@ -5,7 +5,14 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: path.resolve(__dirname, '../wwwroot/js'),
-    emptyOutDir: true
+    outDir: path.resolve(__dirname, '../GameSite/wwwroot/js/assets'),
+    emptyOutDir: true,
+    rollupOptions: {
+      input: path.resolve(__dirname, 'src/index.tsx'),
+      output: {
+        entryFileNames: 'index.js',
+        assetFileNames: 'index.[ext]'
+      }
+    }
   }
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { dealInitial, attack, defend, aiMove, canBeat } from '../../src/durak';
+import './style.css';
 import { DeckArea } from './components/DeckArea';
 import { Card, GameState } from '../../src/types';
 

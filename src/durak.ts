@@ -21,8 +21,8 @@ export function shuffle(cards: Card[]): Card[] {
   return a;
 }
 
-export function dealInitial(): GameState {
-  const deck = shuffle(buildDeck(36));
+export function dealInitial(deckSize: 24|36|52 = 36): GameState {
+  const deck = shuffle(buildDeck(deckSize));
   const players: Record<'human'|'ai', Player> = {
     human: {hand: [], role: 'human'},
     ai: {hand: [], role: 'ai'}
@@ -109,4 +109,28 @@ export function defend(state: GameState, attackIndex: number, cardId: string): b
     state.phase = 'attack';
   }
   return true;
+}
+
+export function aiMove(state: GameState): void {
+  if(state.attacker === 'ai' && state.phase === 'attack'){
+    const card = state.players.ai.hand[0];
+    if(card) attack(state, card.id);
+    return;
+  }
+  if(state.defender === 'ai' && state.phase === 'defense'){
+    const idx = state.table.findIndex(p => !p.defense);
+    if(idx === -1) return;
+    const attackCard = state.table[idx].attack;
+    const hand = state.players.ai.hand;
+    const def = hand.find(c => canBeat(attackCard, c, state.trump));
+    if(def){
+      defend(state, idx, def.id);
+    } else {
+      hand.push(...state.table.flatMap(p => [p.attack, ...(p.defense ? [p.defense] : [])]));
+      state.table = [];
+      state.phase = 'attack';
+      state.attacker = 'ai';
+      state.defender = 'human';
+    }
+  }
 }

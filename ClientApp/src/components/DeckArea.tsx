@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '../../src/types';
+import { Card } from '../../../src/types';
 
 export function DeckArea({ deck, trumpCard }: { deck: Card[]; trumpCard: Card }) {
   const img = `/textures/cards/${trumpCard.id}.png`;

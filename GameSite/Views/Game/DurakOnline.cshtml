@@ -2,7 +2,8 @@
     ViewData["Title"] = "Durak Online";
 }
 
-<div id="durak-root"></div>
+<div id="durak-root" class="durak-page"></div>
 
-<link rel="stylesheet" href="~/js/assets/index.css" />
-<script type="module" src="~/js/assets/index.js"></script>
+@section Scripts {
+    <script type="module" src="~/js/durak-ui.js" asp-append-version="true"></script>
+}

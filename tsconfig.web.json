@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "es2020",
+    "moduleResolution": "node",
+    "outDir": "GameSite/wwwroot/js",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"]
+}

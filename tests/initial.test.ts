@@ -21,4 +21,11 @@ describe('dealInitial', () => {
     const minTrumpRank = Math.min(...allTrumpCards.map(c => c.rank));
     expect(Math.min(...allTrumpPlayerCards.map(c => c.rank))).toBe(minTrumpRank);
   });
+
+  test('dealInitial accepts deck size', () => {
+    const s24 = dealInitial(24);
+    expect(s24.deck.length).toBe(11);
+    const s52 = dealInitial(52);
+    expect(s52.deck.length).toBe(39);
+  });
 });

@@ -33,9 +33,4 @@
     <ProjectReference Include="..\Durak.Core\Durak.Core.csproj" />
   </ItemGroup>
 
-  <Target Name="ViteBuild" AfterTargets="Publish">
-    <Exec WorkingDirectory="ClientApp" Command="npm install" />
-    <Exec WorkingDirectory="ClientApp" Command="npm run build" />
-  </Target>
-
 </Project>

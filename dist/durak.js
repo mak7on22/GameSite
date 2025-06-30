@@ -6,6 +6,10 @@ exports.dealInitial = dealInitial;
 exports.canBeat = canBeat;
 exports.attack = attack;
 exports.defend = defend;
+exports.aiMove = aiMove;
+exports.takeCards = takeCards;
+exports.finishRound = finishRound;
+exports.refillHands = refillHands;
 const RANKS = [6, 7, 8, 9, 10, 11, 12, 13, 14];
 const SUITS = ['clubs', 'diamonds', 'hearts', 'spades'];
 function buildDeck(size = 36) {
@@ -26,8 +30,8 @@ function shuffle(cards) {
     }
     return a;
 }
-function dealInitial() {
-    const deck = shuffle(buildDeck(36));
+function dealInitial(deckSize = 36) {
+    const deck = shuffle(buildDeck(deckSize));
     const players = {
         human: { hand: [], role: 'human' },
         ai: { hand: [], role: 'ai' }
@@ -119,4 +123,60 @@ function defend(state, attackIndex, cardId) {
         state.phase = 'attack';
     }
     return true;
+}
+function aiMove(state) {
+    if (state.attacker === 'ai' && state.phase === 'attack') {
+        const card = state.players.ai.hand[0];
+        if (card)
+            attack(state, card.id);
+        return;
+    }
+    if (state.defender === 'ai' && state.phase === 'defense') {
+        const idx = state.table.findIndex(p => !p.defense);
+        if (idx === -1)
+            return;
+        const attackCard = state.table[idx].attack;
+        const hand = state.players.ai.hand;
+        const def = hand.find(c => canBeat(attackCard, c, state.trump));
+        if (def) {
+            defend(state, idx, def.id);
+        }
+        else {
+            takeCards(state);
+            state.attacker = 'ai';
+            state.defender = 'human';
+        }
+    }
+    if (state.phase === 'resolution' && (state.attacker === 'ai' || state.defender === 'ai')) {
+        finishRound(state);
+    }
+}
+function takeCards(state) {
+    const defender = state.players[state.defender];
+    defender.hand.push(...state.table.flatMap(p => [p.attack, ...(p.defense ? [p.defense] : [])]));
+    state.table = [];
+    refillHands(state);
+    state.phase = 'attack';
+}
+function finishRound(state) {
+    state.table = [];
+    const newAttacker = state.defender;
+    state.defender = state.attacker;
+    state.attacker = newAttacker;
+    refillHands(state);
+    state.phase = 'attack';
+}
+function refillHands(state) {
+    const order = [state.attacker, state.defender];
+    for (const role of order) {
+        const player = state.players[role];
+        while (player.hand.length < 6 && state.deck.length > 0) {
+            const c = state.deck.shift();
+            if (c)
+                player.hand.push(c);
+        }
+    }
+    if (state.players.human.hand.length === 0 && state.players.ai.hand.length === 0 && state.deck.length === 0) {
+        state.phase = 'finished';
+    }
 }

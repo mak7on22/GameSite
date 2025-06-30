@@ -82,7 +82,7 @@ function canBeat(att, def, trump) {
     return false;
 }
 function attack(state, cardId) {
-    if (state.phase !== 'attack')
+    if (state.phase !== 'attack' && state.phase !== 'defense')
         return false;
     const player = state.players[state.attacker];
     const idx = player.hand.findIndex(c => c.id === cardId);
@@ -128,7 +128,7 @@ function defend(state, attackIndex, cardId) {
     return true;
 }
 function aiMove(state) {
-    if (state.attacker === 'ai' && state.phase === 'attack') {
+    if (state.attacker === 'ai' && (state.phase === 'attack' || state.phase === 'defense')) {
         const hand = state.players.ai.hand;
         const ranks = ranksOnTable(state);
         const limit = Math.min(6, state.players[state.defender].hand.length);

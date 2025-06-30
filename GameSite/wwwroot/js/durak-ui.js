@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function onCardClick(card) {
     if (!state) return;
-    if (state.attacker === 'human' && state.phase === 'attack') {
+    if (state.attacker === 'human' && (state.phase === 'attack' || state.phase === 'defense')) {
       if (attack(state, card.id)) {
         renderGame();
         setTimeout(aiTurn, 500);

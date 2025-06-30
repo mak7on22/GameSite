@@ -85,7 +85,7 @@ export function canBeat(att: Card, def: Card, trump: Suit): boolean {
 }
 
 export function attack(state: GameState, cardId: string): boolean {
-  if (state.phase !== 'attack') return false;
+  if (state.phase !== 'attack' && state.phase !== 'defense') return false;
   const player = state.players[state.attacker];
   const idx = player.hand.findIndex(c => c.id === cardId);
   if (idx === -1) return false;
@@ -125,7 +125,7 @@ export function defend(state: GameState, attackIndex: number, cardId: string): b
 }
 
 export function aiMove(state: GameState): void {
-  if(state.attacker === 'ai' && state.phase === 'attack'){
+  if(state.attacker === 'ai' && (state.phase === 'attack' || state.phase === 'defense')){
     const hand = state.players.ai.hand;
     const ranks = ranksOnTable(state);
     const suits = suitsOnTable(state);

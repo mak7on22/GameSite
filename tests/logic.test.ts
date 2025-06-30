@@ -68,6 +68,17 @@ describe('attack and defend logic', () => {
     expect(ok).toBe(false);
   });
 
+  test('attacker can add card during defense', () => {
+    const state = setupState();
+    const extra: Card = { id: '6_of_hearts', rank: 6, suit: 'hearts' };
+    state.players.human.hand.push(extra);
+    state.players.ai.hand.push({ id: '8_of_spades', rank: 8, suit: 'spades' });
+    attack(state, '6_of_clubs'); // phase becomes defense
+    const ok = attack(state, '6_of_hearts');
+    expect(ok).toBe(true);
+    expect(state.table).toHaveLength(2);
+  });
+
   test('attacker can add card with matching suit', () => {
     const state = setupState();
     const extra: Card = { id: '9_of_clubs', rank: 9, suit: 'clubs' };
@@ -106,5 +117,27 @@ describe('attack and defend logic', () => {
     aiMove(state);
     expect(state.table).toHaveLength(2);
     expect(state.table[1].attack.suit).toBe('spades');
+  });
+
+  test('ai can add card during defense', () => {
+    const c1: Card = { id: '6_of_spades', rank: 6, suit: 'spades' };
+    const c2: Card = { id: '6_of_hearts', rank: 6, suit: 'hearts' };
+    const defendCard: Card = { id: '7_of_clubs', rank: 7, suit: 'clubs' };
+    const spare: Card = { id: '8_of_diamonds', rank: 8, suit: 'diamonds' };
+    const state: GameState = {
+      players: {
+        human: { hand: [defendCard, spare], role: 'human' },
+        ai: { hand: [c1, c2], role: 'ai' }
+      },
+      deck: [],
+      trump: 'diamonds',
+      attacker: 'ai',
+      defender: 'human',
+      table: [],
+      phase: 'attack'
+    };
+    aiMove(state); // AI plays first card
+    aiMove(state); // should add second card even though phase is defense
+    expect(state.table).toHaveLength(2);
   });
 });

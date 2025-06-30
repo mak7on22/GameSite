@@ -69,6 +69,15 @@ function ranksOnTable(state: GameState): number[] {
   return ranks;
 }
 
+function suitsOnTable(state: GameState): Suit[] {
+  const suits: Suit[] = [];
+  state.table.forEach(p => {
+    suits.push(p.attack.suit);
+    if (p.defense) suits.push(p.defense.suit);
+  });
+  return suits;
+}
+
 export function canBeat(att: Card, def: Card, trump: Suit): boolean {
   if (def.suit === att.suit && def.rank > att.rank) return true;
   if (def.suit === trump && att.suit !== trump) return true;
@@ -85,7 +94,8 @@ export function attack(state: GameState, cardId: string): boolean {
     const defenderCards = state.players[state.defender].hand.length;
     if (state.table.length >= Math.min(6, defenderCards)) return false;
     const ranks = ranksOnTable(state);
-    if (!ranks.includes(card.rank)) return false;
+    const suits = suitsOnTable(state);
+    if (!ranks.includes(card.rank) && !suits.includes(card.suit)) return false;
   }
   player.hand.splice(idx, 1);
   state.table.push({ attack: card });
@@ -106,8 +116,8 @@ export function defend(state: GameState, attackIndex: number, cardId: string): b
   defender.hand.splice(idx, 1);
   pair.defense = card;
   state.lastMove = { player: state.defender, action: 'defense', card };
-  if (state.table.every(p => p.defense)) {
-    state.phase = 'resolution';
+  if (state.table.some(p => !p.defense)) {
+    state.phase = 'defense';
   } else {
     state.phase = 'attack';
   }
@@ -118,6 +128,7 @@ export function aiMove(state: GameState): void {
   if(state.attacker === 'ai' && state.phase === 'attack'){
     const hand = state.players.ai.hand;
     const ranks = ranksOnTable(state);
+    const suits = suitsOnTable(state);
     const limit = Math.min(6, state.players[state.defender].hand.length);
     if(state.table.length >= limit) return;
     let candidate: Card | undefined;
@@ -125,7 +136,7 @@ export function aiMove(state: GameState): void {
       candidate = [...hand].sort((a,b)=>a.rank-b.rank)
         .find(c => c.suit !== state.trump) || [...hand].sort((a,b)=>a.rank-b.rank)[0];
     } else {
-      candidate = hand.filter(c => ranks.includes(c.rank))
+      candidate = hand.filter(c => ranks.includes(c.rank) || suits.includes(c.suit))
         .sort((a,b)=>a.rank-b.rank)[0];
     }
     if(candidate) attack(state, candidate.id);

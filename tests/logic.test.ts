@@ -1,4 +1,4 @@
-import { attack, defend } from '../src/durak';
+import { attack, defend, aiMove } from '../src/durak';
 import { GameState, Card } from '../src/types';
 
 describe('attack and defend logic', () => {
@@ -66,5 +66,45 @@ describe('attack and defend logic', () => {
     state.players.human.hand.push(extra);
     const ok = attack(state, '6_of_hearts');
     expect(ok).toBe(false);
+  });
+
+  test('attacker can add card with matching suit', () => {
+    const state = setupState();
+    const extra: Card = { id: '9_of_clubs', rank: 9, suit: 'clubs' };
+    const defendExtra: Card = { id: '8_of_hearts', rank: 8, suit: 'hearts' };
+    const aiSpare: Card = { id: '10_of_diamonds', rank: 10, suit: 'diamonds' };
+    state.players.ai.hand.push(defendExtra, aiSpare);
+    state.players.human.hand.push(extra);
+    attack(state, '6_of_clubs');
+    defend(state, 0, '7_of_clubs');
+    const ok = attack(state, '9_of_clubs');
+    expect(ok).toBe(true);
+    expect(state.table).toHaveLength(2);
+    expect(state.table[1].attack.id).toBe('9_of_clubs');
+  });
+
+  test('ai attacks with matching suit when possible', () => {
+    const c1: Card = { id: '6_of_spades', rank: 6, suit: 'spades' };
+    const c2: Card = { id: '9_of_spades', rank: 9, suit: 'spades' };
+    const defendCard: Card = { id: '7_of_spades', rank: 7, suit: 'spades' };
+    const extraHuman: Card = { id: '8_of_diamonds', rank: 8, suit: 'diamonds' };
+    const extraHuman2: Card = { id: '9_of_hearts', rank: 9, suit: 'hearts' };
+    const state: GameState = {
+      players: {
+        human: { hand: [defendCard, extraHuman, extraHuman2], role: 'human' },
+        ai: { hand: [c1, c2], role: 'ai' }
+      },
+      deck: [],
+      trump: 'hearts',
+      attacker: 'ai',
+      defender: 'human',
+      table: [],
+      phase: 'attack'
+    };
+    aiMove(state);
+    defend(state, 0, '7_of_spades');
+    aiMove(state);
+    expect(state.table).toHaveLength(2);
+    expect(state.table[1].attack.suit).toBe('spades');
   });
 });

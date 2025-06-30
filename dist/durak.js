@@ -119,8 +119,8 @@ function defend(state, attackIndex, cardId) {
     defender.hand.splice(idx, 1);
     pair.defense = card;
     state.lastMove = { player: state.defender, action: 'defense', card };
-    if (state.table.every(p => p.defense)) {
-        state.phase = 'resolution';
+    if (state.table.some(p => !p.defense)) {
+        state.phase = 'defense';
     }
     else {
         state.phase = 'attack';

@@ -49,11 +49,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const att = document.createElement('img');
       att.src = cardImg(pair.attack);
       att.className = 'card';
+      if(state.lastMove && state.lastMove.player === 'ai' && state.lastMove.card && state.lastMove.card.id === pair.attack.id && state.lastMove.action === 'attack'){
+        att.classList.add('ai-play');
+      }
       tc.appendChild(att);
       if (pair.defense) {
         const def = document.createElement('img');
         def.src = cardImg(pair.defense);
         def.className = 'card defense';
+        if(state.lastMove && state.lastMove.player === 'ai' && state.lastMove.card && state.lastMove.card.id === pair.defense.id && state.lastMove.action === 'defense'){
+          def.classList.add('ai-play');
+        }
         tc.appendChild(def);
       }
       table.appendChild(tc);
@@ -117,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     aiMove(state);
     if (JSON.stringify(state) !== before) {
       renderGame();
-      if (state.attacker === 'ai' || state.defender === 'ai') {
+      if ((state.attacker === 'ai' || state.defender === 'ai') && state.phase !== 'resolution') {
         setTimeout(aiTurn, 500);
       }
     }

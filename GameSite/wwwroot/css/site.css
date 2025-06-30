@@ -232,3 +232,12 @@ body {
 
 .deal-player { animation: deal-player 0.3s ease-out; }
 .deal-ai { animation: deal-ai 0.3s ease-out; }
+
+@keyframes ai-play {
+  from { transform: scale(1.2); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.ai-play {
+  animation: ai-play 0.3s ease-out;
+}

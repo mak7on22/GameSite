@@ -1,6 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.buildDeck = buildDeck;
+exports.shuffle = shuffle;
+exports.dealInitial = dealInitial;
+exports.canBeat = canBeat;
+exports.attack = attack;
+exports.defend = defend;
+exports.aiMove = aiMove;
+exports.takeCards = takeCards;
+exports.finishRound = finishRound;
+exports.refillHands = refillHands;
 const RANKS = [6, 7, 8, 9, 10, 11, 12, 13, 14];
 const SUITS = ['clubs', 'diamonds', 'hearts', 'spades'];
-export function buildDeck(size = 36) {
+function buildDeck(size = 36) {
     let ranks = RANKS;
     if (size === 24)
         ranks = RANKS.slice(3); // 9-A
@@ -10,7 +22,7 @@ export function buildDeck(size = 36) {
     ranks.forEach(r => SUITS.forEach(s => deck.push({ id: `${r}_of_${s}`, rank: r, suit: s })));
     return deck;
 }
-export function shuffle(cards) {
+function shuffle(cards) {
     const a = [...cards];
     for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -18,7 +30,7 @@ export function shuffle(cards) {
     }
     return a;
 }
-export function dealInitial(deckSize = 36) {
+function dealInitial(deckSize = 36) {
     const deck = shuffle(buildDeck(deckSize));
     const players = {
         human: { hand: [], role: 'human' },
@@ -62,14 +74,14 @@ function ranksOnTable(state) {
     });
     return ranks;
 }
-export function canBeat(att, def, trump) {
+function canBeat(att, def, trump) {
     if (def.suit === att.suit && def.rank > att.rank)
         return true;
     if (def.suit === trump && att.suit !== trump)
         return true;
     return false;
 }
-export function attack(state, cardId) {
+function attack(state, cardId) {
     if (state.phase !== 'attack')
         return false;
     const player = state.players[state.attacker];
@@ -78,7 +90,8 @@ export function attack(state, cardId) {
         return false;
     const card = player.hand[idx];
     if (state.table.length > 0) {
-        if (state.table.length >= 6)
+        const defenderCards = state.players[state.defender].hand.length;
+        if (state.table.length >= Math.min(6, defenderCards))
             return false;
         const ranks = ranksOnTable(state);
         if (!ranks.includes(card.rank))
@@ -87,9 +100,10 @@ export function attack(state, cardId) {
     player.hand.splice(idx, 1);
     state.table.push({ attack: card });
     state.phase = 'defense';
+    state.lastMove = { player: state.attacker, action: 'attack', card };
     return true;
 }
-export function defend(state, attackIndex, cardId) {
+function defend(state, attackIndex, cardId) {
     if (state.phase !== 'defense')
         return false;
     const pair = state.table[attackIndex];
@@ -104,6 +118,7 @@ export function defend(state, attackIndex, cardId) {
         return false;
     defender.hand.splice(idx, 1);
     pair.defense = card;
+    state.lastMove = { player: state.defender, action: 'defense', card };
     if (state.table.every(p => p.defense)) {
         state.phase = 'resolution';
     }
@@ -112,11 +127,24 @@ export function defend(state, attackIndex, cardId) {
     }
     return true;
 }
-export function aiMove(state) {
+function aiMove(state) {
     if (state.attacker === 'ai' && state.phase === 'attack') {
-        const card = state.players.ai.hand[0];
-        if (card)
-            attack(state, card.id);
+        const hand = state.players.ai.hand;
+        const ranks = ranksOnTable(state);
+        const limit = Math.min(6, state.players[state.defender].hand.length);
+        if (state.table.length >= limit)
+            return;
+        let candidate;
+        if (state.table.length === 0) {
+            candidate = [...hand].sort((a, b) => a.rank - b.rank)
+                .find(c => c.suit !== state.trump) || [...hand].sort((a, b) => a.rank - b.rank)[0];
+        }
+        else {
+            candidate = hand.filter(c => ranks.includes(c.rank))
+                .sort((a, b) => a.rank - b.rank)[0];
+        }
+        if (candidate)
+            attack(state, candidate.id);
         return;
     }
     if (state.defender === 'ai' && state.phase === 'defense') {
@@ -131,33 +159,35 @@ export function aiMove(state) {
         }
         else {
             takeCards(state);
-            state.attacker = 'ai';
-            state.defender = 'human';
         }
     }
-    if (state.phase === 'resolution' && (state.attacker === 'ai' || state.defender === 'ai')) {
-        finishRound(state);
-    }
+    // When resolution is reached and the AI participated, wait for the human
+    // player to confirm round completion via UI instead of finishing
+    // automatically.
 }
-
-export function takeCards(state) {
+function takeCards(state) {
     const defender = state.players[state.defender];
     defender.hand.push(...state.table.flatMap(p => [p.attack, ...(p.defense ? [p.defense] : [])]));
     state.table = [];
     refillHands(state);
+    const taker = state.defender;
+    const newAttacker = state.defender;
+    state.defender = state.attacker;
+    state.attacker = newAttacker;
     state.phase = 'attack';
+    state.lastMove = { player: taker, action: 'take' };
 }
-
-export function finishRound(state) {
+function finishRound(state) {
     state.table = [];
+    const finisher = state.defender;
     const newAttacker = state.defender;
     state.defender = state.attacker;
     state.attacker = newAttacker;
     refillHands(state);
     state.phase = 'attack';
+    state.lastMove = { player: finisher, action: 'finish' };
 }
-
-export function refillHands(state) {
+function refillHands(state) {
     const order = [state.attacker, state.defender];
     for (const role of order) {
         const player = state.players[role];

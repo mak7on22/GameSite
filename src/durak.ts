@@ -82,7 +82,8 @@ export function attack(state: GameState, cardId: string): boolean {
   if (idx === -1) return false;
   const card = player.hand[idx];
   if (state.table.length > 0) {
-    if (state.table.length >= 6) return false;
+    const defenderCards = state.players[state.defender].hand.length;
+    if (state.table.length >= Math.min(6, defenderCards)) return false;
     const ranks = ranksOnTable(state);
     if (!ranks.includes(card.rank)) return false;
   }
@@ -113,8 +114,19 @@ export function defend(state: GameState, attackIndex: number, cardId: string): b
 
 export function aiMove(state: GameState): void {
   if(state.attacker === 'ai' && state.phase === 'attack'){
-    const card = state.players.ai.hand[0];
-    if(card) attack(state, card.id);
+    const hand = state.players.ai.hand;
+    const ranks = ranksOnTable(state);
+    const limit = Math.min(6, state.players[state.defender].hand.length);
+    if(state.table.length >= limit) return;
+    let candidate: Card | undefined;
+    if(state.table.length === 0){
+      candidate = [...hand].sort((a,b)=>a.rank-b.rank)
+        .find(c => c.suit !== state.trump) || [...hand].sort((a,b)=>a.rank-b.rank)[0];
+    } else {
+      candidate = hand.filter(c => ranks.includes(c.rank))
+        .sort((a,b)=>a.rank-b.rank)[0];
+    }
+    if(candidate) attack(state, candidate.id);
     return;
   }
   if(state.defender === 'ai' && state.phase === 'defense'){
@@ -127,8 +139,6 @@ export function aiMove(state: GameState): void {
       defend(state, idx, def.id);
     } else {
       takeCards(state);
-      state.attacker = 'ai';
-      state.defender = 'human';
     }
   }
   if(state.phase === 'resolution' && (state.attacker === 'ai' || state.defender === 'ai')){
@@ -141,6 +151,9 @@ export function takeCards(state: GameState): void {
   defender.hand.push(...state.table.flatMap(p => [p.attack, ...(p.defense ? [p.defense] : [])]));
   state.table = [];
   refillHands(state);
+  const newAttacker = state.defender;
+  state.defender = state.attacker;
+  state.attacker = newAttacker;
   state.phase = 'attack';
 }
 

@@ -1,4 +1,4 @@
-import { dealInitial, attack, defend, aiMove, canBeat } from './durak.js';
+import { dealInitial, attack, defend, aiMove, canBeat, takeCards, finishRound } from './durak.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const root = document.getElementById('durak-root');
@@ -84,6 +84,30 @@ document.addEventListener('DOMContentLoaded', () => {
     page.appendChild(table);
     page.appendChild(deckArea);
     page.appendChild(playerHand);
+
+    const controls = document.createElement('div');
+    controls.className = 'controls';
+    const takeBtn = document.createElement('button');
+    takeBtn.textContent = '\u0412\u0437\u044F\u0442\u044C';
+    takeBtn.addEventListener('click', () => {
+      if(state && state.defender === 'human' && (state.phase === 'defense' || state.phase === 'resolution')) {
+        takeCards(state);
+        renderGame();
+        setTimeout(aiTurn, 500);
+      }
+    });
+    const bitoBtn = document.createElement('button');
+    bitoBtn.textContent = '\u0411\u0438\u0442\u043E';
+    bitoBtn.addEventListener('click', () => {
+      if(state && state.phase === 'resolution') {
+        finishRound(state);
+        renderGame();
+        setTimeout(aiTurn, 500);
+      }
+    });
+    controls.appendChild(takeBtn);
+    controls.appendChild(bitoBtn);
+    page.appendChild(controls);
     root.appendChild(page);
   }
 

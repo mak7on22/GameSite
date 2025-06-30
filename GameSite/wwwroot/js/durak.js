@@ -130,11 +130,44 @@ export function aiMove(state) {
             defend(state, idx, def.id);
         }
         else {
-            hand.push(...state.table.flatMap(p => [p.attack, ...(p.defense ? [p.defense] : [])]));
-            state.table = [];
-            state.phase = 'attack';
+            takeCards(state);
             state.attacker = 'ai';
             state.defender = 'human';
         }
+    }
+    if (state.phase === 'resolution' && (state.attacker === 'ai' || state.defender === 'ai')) {
+        finishRound(state);
+    }
+}
+
+export function takeCards(state) {
+    const defender = state.players[state.defender];
+    defender.hand.push(...state.table.flatMap(p => [p.attack, ...(p.defense ? [p.defense] : [])]));
+    state.table = [];
+    refillHands(state);
+    state.phase = 'attack';
+}
+
+export function finishRound(state) {
+    state.table = [];
+    const newAttacker = state.defender;
+    state.defender = state.attacker;
+    state.attacker = newAttacker;
+    refillHands(state);
+    state.phase = 'attack';
+}
+
+export function refillHands(state) {
+    const order = [state.attacker, state.defender];
+    for (const role of order) {
+        const player = state.players[role];
+        while (player.hand.length < 6 && state.deck.length > 0) {
+            const c = state.deck.shift();
+            if (c)
+                player.hand.push(c);
+        }
+    }
+    if (state.players.human.hand.length === 0 && state.players.ai.hand.length === 0 && state.deck.length === 0) {
+        state.phase = 'finished';
     }
 }

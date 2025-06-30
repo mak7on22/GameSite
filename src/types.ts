@@ -23,4 +23,13 @@ export interface GameState {
   defender: 'human' | 'ai';
   table: TablePair[];
   phase: 'attack' | 'defense' | 'resolution' | 'refill' | 'finished';
+  /**
+   * Information about the last move performed. Used mainly by the UI to
+   * highlight AI actions. Not required for game logic.
+   */
+  lastMove?: {
+    player: 'human' | 'ai';
+    action: 'attack' | 'defense' | 'take' | 'finish';
+    card?: Card;
+  };
 }

@@ -90,6 +90,7 @@ export function attack(state: GameState, cardId: string): boolean {
   player.hand.splice(idx, 1);
   state.table.push({ attack: card });
   state.phase = 'defense';
+  state.lastMove = { player: state.attacker, action: 'attack', card };
   return true;
 }
 
@@ -104,6 +105,7 @@ export function defend(state: GameState, attackIndex: number, cardId: string): b
   if (!canBeat(pair.attack, card, state.trump)) return false;
   defender.hand.splice(idx, 1);
   pair.defense = card;
+  state.lastMove = { player: state.defender, action: 'defense', card };
   if (state.table.every(p => p.defense)) {
     state.phase = 'resolution';
   } else {
@@ -141,9 +143,9 @@ export function aiMove(state: GameState): void {
       takeCards(state);
     }
   }
-  if(state.phase === 'resolution' && (state.attacker === 'ai' || state.defender === 'ai')){
-    finishRound(state);
-  }
+  // When resolution is reached and the AI participated, wait for the human
+  // player to confirm round completion via UI instead of finishing
+  // automatically.
 }
 
 export function takeCards(state: GameState): void {
@@ -151,19 +153,23 @@ export function takeCards(state: GameState): void {
   defender.hand.push(...state.table.flatMap(p => [p.attack, ...(p.defense ? [p.defense] : [])]));
   state.table = [];
   refillHands(state);
+  const taker = state.defender;
   const newAttacker = state.defender;
   state.defender = state.attacker;
   state.attacker = newAttacker;
   state.phase = 'attack';
+  state.lastMove = { player: taker, action: 'take' };
 }
 
 export function finishRound(state: GameState): void {
   state.table = [];
+  const finisher = state.defender;
   const newAttacker = state.defender;
   state.defender = state.attacker;
   state.attacker = newAttacker;
   refillHands(state);
   state.phase = 'attack';
+  state.lastMove = { player: finisher, action: 'finish' };
 }
 
 export function refillHands(state: GameState): void {

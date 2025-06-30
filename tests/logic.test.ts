@@ -30,8 +30,8 @@ describe('attack and defend logic', () => {
   test('defender must beat with higher or trump card', () => {
     const state = setupState();
     attack(state, '6_of_clubs');
-    const bad = defend(state, 0, '7_of_clubs');
-    expect(bad).toBe(true);
+    const ok = defend(state, 0, '7_of_clubs');
+    expect(ok).toBe(true);
     expect(state.table[0].defense?.id).toBe('7_of_clubs');
   });
 
@@ -55,5 +55,16 @@ describe('attack and defend logic', () => {
     expect(ok).toBe(false);
     expect(state.table[0].defense).toBeUndefined();
     expect(state.players.ai.hand).toContain(weak);
+  });
+
+  test('attacker cannot exceed defender hand size', () => {
+    const state = setupState();
+    // defender has only one card, so limit = 1
+    attack(state, '6_of_clubs');
+    // attacker tries to add another card of same rank
+    const extra: Card = { id: '6_of_hearts', rank: 6, suit: 'hearts' };
+    state.players.human.hand.push(extra);
+    const ok = attack(state, '6_of_hearts');
+    expect(ok).toBe(false);
   });
 });
